@@ -41,9 +41,9 @@
   <img src="https://img.shields.io/badge/Java-ffffff?style=for-the-badge&logo=openjdk&logoColor=black" />
   <img src="https://img.shields.io/badge/Linux_Shell-e0e0e0?style=for-the-badge&logo=linux&logoColor=black" />
   <img src="https://img.shields.io/badge/Git-ffffff?style=for-the-badge&logo=git&logoColor=black" />
-  <img src="https://img.shields.io/badge/Git-ffffff?style=for-the-badge&logo=html&logoColor=black" />
-  <img src="https://img.shields.io/badge/Git-ffffff?style=for-the-badge&logo=css&logoColor=black" />
-  <img src="https://img.shields.io/badge/Git-ffffff?style=for-the-badge&logo=javascript&logoColor=black" />
+  <img src="https://img.shields.io/badge/HTML-ffffff?style=for-the-badge&logo=html5&logoColor=black" />
+  <img src="https://img.shields.io/badge/CSS-ffffff?style=for-the-badge&logo=css&logoColor=black" />
+  <img src="https://img.shields.io/badge/JavaScript-ffffff?style=for-the-badge&logo=javascript&logoColor=black" />
 </p>
 
 <h3>⚙️ Hardware & Industrial Automation</h3>
