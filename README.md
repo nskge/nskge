@@ -39,18 +39,19 @@
   <img src="https://img.shields.io/badge/Python-ffffff?style=for-the-badge&logo=python&logoColor=black" />
   <img src="https://img.shields.io/badge/C%23-e0e0e0?style=for-the-badge&logo=c-sharp&logoColor=black" />
   <img src="https://img.shields.io/badge/Java-ffffff?style=for-the-badge&logo=openjdk&logoColor=black" />
-  <img src="https://img.shields.io/badge/Linux_Shell-e0e0e0?style=for-the-badge&logo=linux&logoColor=black" />
+  <img src="https://img.shields.io/badge/Linux-e0e0e0?style=for-the-badge&logo=linux&logoColor=black" />
   <img src="https://img.shields.io/badge/Git-ffffff?style=for-the-badge&logo=git&logoColor=black" />
   <img src="https://img.shields.io/badge/HTML-ffffff?style=for-the-badge&logo=html5&logoColor=black" />
   <img src="https://img.shields.io/badge/CSS-ffffff?style=for-the-badge&logo=css&logoColor=black" />
   <img src="https://img.shields.io/badge/JavaScript-ffffff?style=for-the-badge&logo=javascript&logoColor=black" />
+  <img src="https://img.shields.io/badge/SQL_Server-e0e0e0?style=for-the-badge&logo=microsoft-sql-server&logoColor=black" />
+  <img src="https://img.shields.io/badge/MongoDB-e0e0e0?style=for-the-badge&logo=mongodb&logoColor=black" />
 </p>
 
 <h3>⚙️ Hardware & Industrial Automation</h3>
 <p>
   <img src="https://img.shields.io/badge/Industrial_CLP-e0e0e0?style=for-the-badge&logo=siemens&logoColor=black" />
   <img src="https://img.shields.io/badge/IoT_&_Sensors-ffffff?style=for-the-badge&logo=arduino&logoColor=black" />
-  <img src="https://img.shields.io/badge/SQL_Server-e0e0e0?style=for-the-badge&logo=microsoft-sql-server&logoColor=black" />
 </p>
 
 <br>
