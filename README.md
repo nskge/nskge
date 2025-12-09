@@ -13,10 +13,7 @@
 
 <br>
 
-<img width="49%" src="https://github-readme-stats.vercel.app/api?username=nskge&show_icons=true&hide_border=true&count_private=true&title_color=ffffff&text_color=e0e0e0&icon_color=ffffff&bg_color=00000000"/>
-<img width="49%" src="https://github-readme-stats.vercel.app/api/top-langs/?username=nskge&show_icons=true&hide_border=true&layout=compact&title_color=ffffff&text_color=e0e0e0&icon_color=ffffff&bg_color=00000000"/>
 
-<br><br>
 
 <h3>🛠️ The Arsenal</h3>
 
