@@ -3,7 +3,7 @@
 <div align="center">
 
   <a href="https://git.io/typing-svg">
-    <img src="https://readme-typing-svg.herokuapp.com/?font=Fira+Code&weight=600&color=ffffff&size=35&center=true&vCenter=true&width=1000&lines=Hello%2C+Friend.;System.init(Red_Team_Ops);Infrastructure+%26+Automation.;Root+Access+Granted." alt="Typing SVG" />
+    <img src="https://readme-typing-svg.herokuapp.com/?font=Fira+Code&weight=600&color=ffffff&size=35&center=true&vCenter=true&width=1000&lines=Hello%2C+Friend.;Infrastructure+%26+Automation.;Root+Access+Granted." alt="Typing SVG" />
   </a>
 
   <h3 align="center" style="color: white;">
@@ -11,7 +11,7 @@
   </h3>
   
   <p align="center" style="color: #cccccc;">
-   Bridging the gap between <b>Industrial Automation</b>, <b>Software Development</b>, and <b>Offensive Security</b>.<br>
+   Bridging the gap between <b>Automation</b>, <b>Software Development</b>, and <b>Offensive Security</b>.<br>
    Currently focused on Network Infrastructure and Vulnerability Assessment.
   </p>
 
@@ -41,6 +41,9 @@
   <img src="https://img.shields.io/badge/Java-ffffff?style=for-the-badge&logo=openjdk&logoColor=black" />
   <img src="https://img.shields.io/badge/Linux_Shell-e0e0e0?style=for-the-badge&logo=linux&logoColor=black" />
   <img src="https://img.shields.io/badge/Git-ffffff?style=for-the-badge&logo=git&logoColor=black" />
+  <img src="https://img.shields.io/badge/Git-ffffff?style=for-the-badge&logo=html&logoColor=black" />
+  <img src="https://img.shields.io/badge/Git-ffffff?style=for-the-badge&logo=css&logoColor=black" />
+  <img src="https://img.shields.io/badge/Git-ffffff?style=for-the-badge&logo=javascript&logoColor=black" />
 </p>
 
 <h3>⚙️ Hardware & Industrial Automation</h3>
