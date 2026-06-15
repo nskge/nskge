@@ -7,7 +7,7 @@
   </a>
 
   <h3 align="center" style="color: white;">
-      IT Infrastructure Intern @ APL Logistics (Multinational)
+      IT Infrastructure Intern & Cybersecurity Red Team
   </h3>
   
   <p align="center" style="color: #cccccc;">
