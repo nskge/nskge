@@ -1,4 +1,4 @@
-<!-- ░▒▓ nskge // ocre ▓▒░  — red team loading -->
+<!-- ░▒▓ nskge // ocre ▓▒░  — offensive security in progress -->
 
 <div align="center">
 
@@ -7,20 +7,20 @@
 <img width="100%" src="https://capsule-render.vercel.app/api?type=rect&height=3&color=0:7c3aed,50:a855f7,100:d946ef&section=header"/>
 
 <a href="https://git.io/typing-svg">
-  <img src="https://readme-typing-svg.demolab.com/?font=Fira+Code&weight=700&size=28&pause=900&color=A855F7&center=true&vCenter=true&width=900&height=80&lines=root%40nskge%3A~%23+whoami;skid+em+ascens%C3%A3o+%2F%2F+red+team+loading...;estudando+pentest+web+no+HackTheBox;ainda+n%C3%A3o+achei+minha+1%C2%AA+vuln...+mas+vou+achar." alt="typing" />
+  <img src="https://readme-typing-svg.demolab.com/?font=Fira+Code&weight=700&size=28&pause=900&color=A855F7&center=true&vCenter=true&width=900&height=80&lines=root%40nskge%3A~%23+whoami;Hello%2C+friend.;IT+Intern+%E2%86%92+Offensive+Security;Studying+Pentest+Web+%26+Red+Team." alt="typing" />
 </a>
 
 <h3>ocre &nbsp;<code>//</code>&nbsp; <code>nskge</code></h3>
 
 <p>
-<b>I.T Intern @ APL Logistics</b> · estudando <b>Pentest Web & Red Team</b><br>
-<sub>Santos, SP — BR · <code>FIAP :: Pós Red Team (incoming 2026 · 10 meses)</code> · <code>ADS :: 5/5</code></sub>
+<b>IT Intern @ APL Logistics</b> · studying <b>Pentest Web & Red Team</b><br>
+<sub><code>FIAP :: Red Team & Pentest postgrad (incoming)</code> · <code>ADS :: final year</code></sub>
 </p>
 
 <p>
-  <img src="https://img.shields.io/badge/Português-nativo-A855F7?style=flat-square&labelColor=0d0d0d" />
+  <img src="https://img.shields.io/badge/Portuguese-native-A855F7?style=flat-square&labelColor=0d0d0d" />
   <img src="https://img.shields.io/badge/English-professional-7c3aed?style=flat-square&labelColor=0d0d0d" />
-  <img src="https://img.shields.io/badge/Español-intermediário-A855F7?style=flat-square&labelColor=0d0d0d" />
+  <img src="https://img.shields.io/badge/Spanish-intermediate-A855F7?style=flat-square&labelColor=0d0d0d" />
 </p>
 
 </div>
@@ -34,18 +34,17 @@ ocre@nightcity:~$ cat /etc/profile
 
   ┌─[ IDENTITY ]──────────────────────────────────────────────┐
   │  name      :: Sândalo (San) Ocre   ·  aka ocre / nskge     │
-  │  role      :: I.T Intern @ APL Logistics                   │
-  │  studying  :: ADS @ UNISANTA — 5/5 (conclusão 2026)        │
-  │  next      :: Pós Red Team & Pentest @ FIAP — 10 meses     │
+  │  role      :: IT Intern @ APL Logistics                   │
+  │  studying  :: Systems Analysis & Development — final year  │
+  │  next      :: Red Team & Pentest postgrad @ FIAP           │
   │  focus     :: Pentest Web · Red Team · Offensive Security  │
-  │  edge      :: infra corp + OT/ICS (PLC) = superfície real  │
-  │  langs     :: pt-BR · en · es                              │
-  │  grinding  :: HackTheBox · Hacking Club (Crowsec)          │
-  │  status    :: skid hoje, red teamer amanhã. studying hard. │
+  │  learning  :: HackTheBox · Hacking Club (Crowsec)          │
+  │  langs     :: pt · en · es                                 │
+  │  status    :: studying hard, breaking things to learn them │
   └────────────────────────────────────────────────────────────┘
 
 ocre@nightcity:~$ sudo make me a red teamer
-[##############------------------]  fase 1/3  ...sem atalho, só grind 🟣
+[##############------------------]  in progress  ...just grinding 🟣
 ```
 
 <img width="100%" src="https://capsule-render.vercel.app/api?type=rect&height=2&color=0:0d0d0d,50:a855f7,100:0d0d0d&section=header"/>
@@ -79,30 +78,21 @@ ocre@nightcity:~$ sudo make me a red teamer
   <img src="https://img.shields.io/badge/Microsoft_365-7c3aed?style=for-the-badge&logoColor=white&labelColor=0d0d0d" />
   <img src="https://img.shields.io/badge/Active_Directory-7c3aed?style=for-the-badge&logoColor=white&labelColor=0d0d0d" />
   <img src="https://img.shields.io/badge/Cisco%2FHP-7c3aed?style=for-the-badge&logo=cisco&logoColor=white&labelColor=0d0d0d" />
-  <img src="https://img.shields.io/badge/PLC%20%2F%20OT--ICS-7c3aed?style=for-the-badge&logo=siemens&logoColor=white&labelColor=0d0d0d" />
 </p>
 
 <img width="100%" src="https://capsule-render.vercel.app/api?type=rect&height=2&color=0:0d0d0d,50:a855f7,100:0d0d0d&section=header"/>
 
-## `> ls -la ./projects`
+## `> ls ./projects`
 
-### 🟣 OkrScann — Web Vulnerability Scanner `[ lab pessoal de estudo ]`
+<p>
+  <a href="https://github.com/nskge/OkrScann">
+    <img src="https://img.shields.io/badge/💀_OkrScann-Web_Vuln_Scanner_(Python)-A855F7?style=for-the-badge&labelColor=0d0d0d" />
+  </a>
+  &nbsp;
+  <img src="https://img.shields.io/badge/⚡_EiCortei-SaaS_·_Next.js_·_Stripe-7c3aed?style=for-the-badge&labelColor=0d0d0d" />
+</p>
 
-Onde eu aprendo as classes de vulnerabilidade **na unha**, escrevendo o scanner do zero em **Python** em vez de só rodar ferramenta pronta.
-
-- 🩸 **Módulos:** SQLi · XSS · LFI · SSRF · XXE · JWT · GraphQL · 403 Bypass
-- 🎯 Assinaturas pra detecção de CVEs em múltiplas tecnologias
-- 🕷️ **Recon:** crawling com Playwright, enum de subdomínios, descoberta de paths, port scan
-- 📄 Geração automática de relatórios
-
-> _Construído pra estudar, não pra fingir que sou pro. Ainda assim, funciona._
-
-### 🟣 EiCortei — SaaS pra barbearias `[ shipado em produção ]`
-
-Projeto Integrador (último semestre de ADS). SaaS completo construído do zero — agendamento, pagamento antecipado (**Stripe + PIX**) e dashboard de comissões em tempo real.
-
-- ⚡ Stack: **Next.js · TypeScript · Vercel** — MVP 100% em produção
-- 🧾 Pagamento nativo pra matar os no-shows (~30% do problema do mercado)
+<sub>Pinned repos below — that's where the real stuff lives. 👇</sub>
 
 <img width="100%" src="https://capsule-render.vercel.app/api?type=rect&height=2&color=0:0d0d0d,50:a855f7,100:0d0d0d&section=header"/>
 
@@ -141,7 +131,7 @@ Projeto Integrador (último semestre de ADS). SaaS completo construído do zero 
 
 <img src="https://komarev.com/ghpvc/?username=nskge&style=flat-square&color=A855F7&label=visitors+on+the+grid" />
 
-<sub><code>// wake the f*ck up, samurai. temos muito o que estudar. //</code></sub>
+<sub><code>// wake the f*ck up, samurai. //</code></sub>
 
 </div>
 
