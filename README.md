@@ -13,7 +13,7 @@
 <h3>ocre &nbsp;<code>//</code>&nbsp; <code>nskge</code></h3>
 
 <p>
-<b>IT Intern @ APL Logistics</b> · studying <b>Pentest Web & Red Team</b><br>
+Studying <b>Pentest Web & Red Team</b> · Offensive Security<br>
 <sub><code>FIAP :: Red Team & Pentest postgrad (incoming)</code> · <code>ADS :: final year</code></sub>
 </p>
 
@@ -33,14 +33,13 @@
 ocre@nightcity:~$ cat /etc/profile
 
   ┌─[ IDENTITY ]──────────────────────────────────────────────┐
-  │  name      :: Sândalo (San) Ocre   ·  aka ocre / nskge     │
-  │  role      :: IT Intern @ APL Logistics                   │
-  │  studying  :: Systems Analysis & Development — final year  │
-  │  next      :: Red Team & Pentest postgrad @ FIAP           │
-  │  focus     :: Pentest Web · Red Team · Offensive Security  │
-  │  learning  :: HackTheBox · Hacking Club (Crowsec)          │
-  │  langs     :: pt · en · es                                 │
-  │  status    :: studying hard, breaking things to learn them │
+  │  name      :: Sândalo (San) Ocre · aka ocre / nskge         │
+  │  studying  :: Systems Analysis & Development — final year    │
+  │  next      :: Red Team & Pentest postgrad @ FIAP            │
+  │  focus     :: Pentest Web · Red Team · Offensive Security    │
+  │  worked    :: IT support · infra · software dev · automation │
+  │  langs     :: pt · en · es                                  │
+  │  status    :: studying hard, breaking things to learn them  │
   └────────────────────────────────────────────────────────────┘
 
 ocre@nightcity:~$ sudo make me a red teamer
@@ -85,11 +84,13 @@ ocre@nightcity:~$ sudo make me a red teamer
 ## `> ls ./projects`
 
 <p>
-  <a href="https://github.com/nskge/OkrScann">
-    <img src="https://img.shields.io/badge/💀_OkrScann-Web_Vuln_Scanner_(Python)-A855F7?style=for-the-badge&labelColor=0d0d0d" />
+  <a href="https://github.com/nskge/abaddon">
+    <img src="https://img.shields.io/badge/💀_abaddon-Web_Vuln_Scanner_(Python)-A855F7?style=for-the-badge&labelColor=0d0d0d" />
   </a>
   &nbsp;
-  <img src="https://img.shields.io/badge/⚡_EiCortei-SaaS_·_Next.js_·_Stripe-7c3aed?style=for-the-badge&labelColor=0d0d0d" />
+  <a href="https://github.com/nskge/CaptureTheOkr">
+    <img src="https://img.shields.io/badge/🚩_CaptureTheOkr-CTF-7c3aed?style=for-the-badge&labelColor=0d0d0d" />
+  </a>
 </p>
 
 <sub>Pinned repos below — that's where the real stuff lives. 👇</sub>
@@ -100,7 +101,7 @@ ocre@nightcity:~$ sudo make me a red teamer
 
 <div align="center">
 
-<img height="170" src="https://github-readme-stats.vercel.app/api?username=nskge&show_icons=true&hide_border=true&bg_color=0d0d0d&title_color=A855F7&icon_color=D946EF&text_color=ffffff&include_all_commits=true" />
+<img height="170" src="https://github-readme-stats.vercel.app/api?username=nskge&show_icons=true&hide_border=true&bg_color=0d0d0d&title_color=A855F7&icon_color=D946EF&text_color=ffffff" />
 <img height="170" src="https://streak-stats.demolab.com/?user=nskge&hide_border=true&background=0d0d0d&stroke=A855F7&ring=A855F7&fire=D946EF&currStreakLabel=A855F7&sideLabels=ffffff&dates=7c3aed&currStreakNum=ffffff&sideNums=ffffff" />
 
 <img height="170" src="https://github-readme-stats.vercel.app/api/top-langs/?username=nskge&layout=compact&hide_border=true&bg_color=0d0d0d&title_color=A855F7&text_color=ffffff&langs_count=8" />
