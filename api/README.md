@@ -6,7 +6,7 @@ O diretório público **/logs/** contém somente o **painel**, sem dados privado
 
 ## Senha de entrada
 
-O site mostra uma tela de senha antes da interface. O Worker confere a senha guardada em `SITE_PASSWORD`, valida Turnstile e libera uma sessão assinada de 12 horas no `sessionStorage` do navegador. O endpoint `/api/access` aceita no máximo 5 tentativas por minuto por hash de IP. As rotas públicas de visitas e marcas exigem a sessão. A senha não fica no GitHub nem no JavaScript público.
+O site mostra uma tela de senha antes da interface. O Worker confere a senha guardada em `SITE_PASSWORD`, valida Turnstile e libera uma sessão assinada de no máximo 24 horas no `sessionStorage` do navegador. Fechar a aba pode encerrar a sessão antes. O endpoint `/api/access` aceita no máximo 5 tentativas por minuto por hash de IP. As rotas públicas de visitas e marcas exigem a sessão. A senha não fica no GitHub nem no JavaScript público.
 
 Para trocar a senha, entre com sua conta Cloudflare, abra o terminal em `api/` e execute `npx.cmd --yes wrangler secret put SITE_PASSWORD`. O Wrangler pedirá a nova senha sem precisar escrevê-la no comando. Depois execute `npx.cmd --yes wrangler secret put ACCESS_SESSION_SECRET` e informe um novo valor aleatório de 32 bytes ou mais; isso revoga as sessões antigas. Guarde os valores fora do repositório. A chave administrativa de `/logs/` é separada. Apenas alguém com acesso à conta Cloudflare ou aos segredos do Worker consegue trocar essa senha.
 

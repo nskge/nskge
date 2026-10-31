@@ -85,13 +85,14 @@ async function adminOK(request,env){
   return diff===0;
 }
 const epoch=()=>Math.floor(Date.now()/1000);
+const ACCESS_TTL=24*60*60;
 const b64url=bytes=>btoa(String.fromCharCode(...bytes)).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
 function unb64url(value){try{if(!/^[A-Za-z0-9_-]{40,100}$/.test(value))return null;const raw=atob(value.replace(/-/g,'+').replace(/_/g,'/')+'==='.slice((value.length+3)%4));return Uint8Array.from(raw,c=>c.charCodeAt(0));}catch{return null;}}
 async function accessKey(env){return crypto.subtle.importKey('raw',enc.encode(env.ACCESS_SESSION_SECRET),{name:'HMAC',hash:'SHA-256'},false,['sign','verify']);}
-async function issueAccess(env){const expires=String(epoch()+43200),signature=await crypto.subtle.sign('HMAC',await accessKey(env),enc.encode(expires));return expires+'.'+b64url(new Uint8Array(signature));}
+async function issueAccess(env){const expires=String(epoch()+ACCESS_TTL),signature=await crypto.subtle.sign('HMAC',await accessKey(env),enc.encode(expires));return expires+'.'+b64url(new Uint8Array(signature));}
 async function accessOK(request,env){
   const raw=request.headers.get('X-Site-Access')||'',parts=raw.split('.');if(parts.length!==2||!/^\d{10}$/.test(parts[0]))return false;
-  const expires=Number(parts[0]),signature=unb64url(parts[1]);if(!signature||expires<epoch()||expires>epoch()+43260)return false;
+  const expires=Number(parts[0]),signature=unb64url(parts[1]);if(!signature||expires<epoch()||expires>epoch()+ACCESS_TTL)return false;
   return crypto.subtle.verify('HMAC',await accessKey(env),signature,enc.encode(parts[0]));
 }
 async function passwordOK(value,env){
@@ -124,7 +125,7 @@ async function main(request,env){
     const value=await bodyJSON(request);
     if(value.website!==''||!await checkTurnstile(value.turnstile,env,'access'))return out({error:'Verificação inválida.'},403,origin,env);
     if(!await passwordOK(value.password,env))return out({error:'Senha inválida.'},401,origin,env);
-    return out({token:await issueAccess(env),expiresIn:43200},200,origin,env);
+    return out({token:await issueAccess(env),expiresIn:ACCESS_TTL},200,origin,env);
   }
   if(request.method==='GET'&&path==='/api/access')return out({ok:true},await accessOK(request,env)?200:401,origin,env);
   if(env.ACCESS_REQUIRED==='true'&&!path.startsWith('/api/admin/')&&!await accessOK(request,env))return out({error:'Acesso ao site necessário.'},401,origin,env);

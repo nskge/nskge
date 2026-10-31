@@ -42,9 +42,14 @@ try{
   await check('wrong site password',call('/api/access',{method:'POST',body:{password:'wrong',turnstile:'access',website:''}}),401);
   await check('invalid access challenge',call('/api/access',{method:'POST',body:{password:env.SITE_PASSWORD,turnstile:'bad',website:''}}),403);
   const access=await check('valid site password',call('/api/access',{method:'POST',body:{password:env.SITE_PASSWORD,turnstile:'access',website:''}}),200);
+  assert.equal(access.data.expiresIn,86400);
+  assert(Math.abs(Number(access.data.token.split('.')[0])-Math.floor(Date.now()/1000)-86400)<=1);
   siteToken=access.data.token;
   await check('valid access session',call('/api/access',{headers:{'X-Site-Access':siteToken}}),200);
   await check('forged access session',call('/api/access',{headers:{'X-Site-Access':siteToken.slice(0,-1)+'x'}}),401);
+  const realNow=Date.now;
+  try{Date.now=()=>realNow()+86401000;await check('access expires after 24 hours',call('/api/access',{headers:{'X-Site-Access':siteToken}}),401);}
+  finally{Date.now=realNow;}
   await check('foreign Origin',call('/api/config',{origin:'https://attacker.example'}),403);
   await check('missing Origin',call('/api/config',{origin:null}),403);
   await check('CORS preflight',call('/api/mark',{method:'OPTIONS'}),204);
