@@ -73,6 +73,8 @@
   });
   closeWrite.addEventListener('click',()=>close('write'));
   closePeople.addEventListener('click',()=>close('people'));
+  $('write-to-people').addEventListener('click',()=>show(true));
+  $('people-to-write').addEventListener('click',()=>show(false));
   document.addEventListener('keydown',e=>{if(e.key==='Escape'&&document.body.classList.contains('panel-open'))close(peoplePanel.hidden?'write':'people');});
   more.addEventListener('click',()=>load(true));
 })();

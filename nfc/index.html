@@ -59,7 +59,8 @@ body.panel-open .card{overflow:visible}
 .write-panel[hidden],#people-panel[hidden]{display:none}
 .sheet-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:2px}
 .sheet-head strong{font-size:14px;color:#fff}
-.close-sheet{width:34px;height:34px;border:1px solid #ffffff32;border-radius:10px;background:#151515;color:#fff;font:700 18px/1 Arial;cursor:pointer}
+.close-sheet{min-height:34px;padding:0 10px;border:1px solid #ffffff32;border-radius:10px;background:#151515;color:#fff;font:700 12px Arial;cursor:pointer}
+.sheet-switch{min-height:36px;width:100%;border:1px solid #ffffff30;border-radius:10px;background:#171717;color:#eee;font:700 12px Arial;cursor:pointer}
 .field-label{font-size:11px;color:#ccc;text-align:left}
 .guestbook #name{width:100%;min-height:40px;background:#050505;color:#f5f5f5;border:1px solid #ffffff2d;border-radius:11px;padding:9px 11px;font:500 14px Arial,sans-serif;outline:none}
 .guestbook #name:focus-visible,.guestbook textarea:focus-visible{border-color:#fff;box-shadow:0 0 0 2px #ffffff25}
@@ -113,7 +114,8 @@ body.panel-open .card{overflow:visible}
       <section class="guestbook" aria-label="Marcas da festa">
         <div class="guest-tabs" role="tablist" aria-label="Marcas da festa"><button type="button" id="tab-write" role="tab" aria-selected="false" aria-controls="write-panel">deixar marca</button><button type="button" id="tab-people" role="tab" aria-selected="false" aria-controls="people-panel">mensagens</button></div>
         <div id="write-panel" class="write-panel" role="tabpanel" aria-labelledby="tab-write" hidden>
-        <div class="sheet-head"><strong>deixe sua marca</strong><button class="close-sheet" id="close-write" type="button" aria-label="Fechar">×</button></div>
+        <div class="sheet-head"><strong>deixe sua marca</strong><button class="close-sheet" id="close-write" type="button">← menu</button></div>
+        <button class="sheet-switch" id="write-to-people" type="button">ver mensagens →</button>
         <label class="field-label" for="name">nome ou apelido (aparece no site)</label>
         <input id="name" type="text" maxlength="32" autocomplete="nickname" placeholder="seu nome ou apelido" aria-label="Nome ou apelido, até 32 caracteres">
         <textarea id="message" placeholder="deixe sua marca..." maxlength="140" aria-label="Mensagem, até 140 caracteres"></textarea>
@@ -126,7 +128,7 @@ body.panel-open .card{overflow:visible}
         <p class="submit-status" id="submit-status" role="status" aria-live="polite">recados em configuração</p>
         <p class="privacy">Seu nome, mensagem e desenho aparecem para todos. Horário, ID aleatório, país e tipo de dispositivo ficam só nos logs privados. Sem MAC ou IP bruto.</p>
         </div>
-        <div id="people-panel" role="tabpanel" aria-labelledby="tab-people" hidden><div class="sheet-head"><strong>mensagens</strong><button class="close-sheet" id="close-people" type="button" aria-label="Fechar">×</button></div><p id="people-status" class="people-status" role="status">carregando mensagens...</p><div id="people-list"></div><button id="people-more" class="people-more" type="button" hidden>ver mais</button></div>
+        <div id="people-panel" role="tabpanel" aria-labelledby="tab-people" hidden><div class="sheet-head"><strong>mensagens</strong><button class="close-sheet" id="close-people" type="button">← menu</button></div><button class="sheet-switch" id="people-to-write" type="button">deixar minha marca →</button><p id="people-status" class="people-status" role="status">carregando mensagens...</p><div id="people-list"></div><button id="people-more" class="people-more" type="button" hidden>ver mais</button></div>
       </section>
     </div>
   </section>
