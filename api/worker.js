@@ -96,8 +96,9 @@ async function main(request,env){
   }
   if(request.method==='POST'&&path==='/api/visit'){
     const value=await bodyJSON(request),id=checkedId(value.visitorId),m=minute(),hash=await hashedIP(request,env),d=info(request);
-    await env.DB.prepare('INSERT INTO visits(visitor_id,time_utc,minute_epoch,ip_hash,country,os,browser) SELECT ?,?,?,?,?,?,? WHERE (SELECT COUNT(*) FROM visits WHERE visitor_id=? AND minute_epoch>?)=0 AND (SELECT COUNT(*) FROM visits WHERE ip_hash=? AND minute_epoch>?)<100')
-      .bind(id,new Date().toISOString(),m,hash,d.country,d.os,d.browser,id,m-30,hash,m-60).run();
+    // Count each opening, with atomic per-browser and per-IP ceilings against refresh spam.
+    await env.DB.prepare('INSERT INTO visits(visitor_id,time_utc,minute_epoch,ip_hash,country,os,browser) SELECT ?,?,?,?,?,?,? WHERE (SELECT COUNT(*) FROM visits WHERE visitor_id=? AND minute_epoch>?)<20 AND (SELECT COUNT(*) FROM visits WHERE ip_hash=? AND minute_epoch>?)<100')
+      .bind(id,new Date().toISOString(),m,hash,d.country,d.os,d.browser,id,m-60,hash,m-60).run();
     const c=await env.DB.prepare('SELECT COUNT(*) AS visits,COUNT(DISTINCT visitor_id) AS visitors FROM visits').first();
     return out(c,200,origin,env);
   }
@@ -116,6 +117,11 @@ async function main(request,env){
     if((r.meta?.changes||0)!==1)return out({error:'Limite atingido. Tente mais tarde.'},429,origin,env);
     return out({ok:true},201,origin,env);
   }
+  if(request.method==='GET'&&path==='/api/admin/notifications'){
+    if(!await adminOK(request,env))return out({error:'Acesso negado.'},401,origin,env);
+    const latest=await env.DB.prepare('SELECT COALESCE(MAX(id),0) AS latest FROM marks').first();
+    return out({latest:latest.latest},200,origin,env);
+  }
   if(request.method==='GET'&&(path==='/api/admin/visits'||path==='/api/admin/messages')){
     if(!await adminOK(request,env))return out({error:'Acesso negado.'},401,origin,env);
     const raw=url.searchParams.get('before');
@@ -133,7 +139,7 @@ async function main(request,env){
 export default {
   async fetch(request,env){
     try{return await main(request,env);}
-    catch(e){if(e?.code)return out({error:e.detail},e.code,request.headers.get('Origin'),env);
+    catch(e){if(Number.isInteger(e?.code)&&e.code>=400&&e.code<=499)return out({error:e.detail},e.code,request.headers.get('Origin'),env);
       console.error('API failure',e?.name||'Error');
       return out({error:'Erro temporário.'},500,request.headers.get('Origin'),env);}
   },

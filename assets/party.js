@@ -83,7 +83,7 @@
       script.src='https://challenges.cloudflare.com/turnstile/v0/api.js?onload=partyTurnstileLoaded&render=explicit';
       script.async=true;script.defer=true;document.head.append(script);
       const v=await call('/api/visit',{visitorId});
-      counter.textContent=Number(v.visitors).toLocaleString('pt-BR')+' pessoas passaram aqui';
+      counter.textContent=Number(v.visitors).toLocaleString('pt-BR')+' visitantes · '+Number(v.visits).toLocaleString('pt-BR')+' aberturas';
       counter.hidden=false;
     }catch{button.disabled=true;say('recados temporariamente indisponíveis.');}
   }

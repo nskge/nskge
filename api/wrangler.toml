@@ -2,16 +2,17 @@ name = "nfc-0x0krr-api"
 main = "worker.js"
 compatibility_date = "2026-10-01"
 workers_dev = true
+preview_urls = false
 
 [vars]
 ALLOWED_ORIGIN = "https://nskge.github.io"
 EXPECTED_HOSTNAME = "nskge.github.io"
-TURNSTILE_SITE_KEY = "REPLACE_WITH_PUBLIC_TURNSTILE_SITE_KEY"
+TURNSTILE_SITE_KEY = "0x4AAAAAAFuJfHxUtyyzF9vh"
 
 [[d1_databases]]
 binding = "DB"
 database_name = "nfc-0x0krr"
-database_id = "REPLACE_WITH_D1_DATABASE_ID"
+database_id = "abb80bcd-8c04-4d6e-972d-5e9aa670a116"
 
 [triggers]
 crons = ["0 5 * * *"]

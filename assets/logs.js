@@ -3,7 +3,8 @@
   const api=(window.NFC_SITE_CONFIG?.apiBase||'').replace(/\/$/,'');
   const $=id=>document.getElementById(id);
   const key=$('admin-key'),status=$('status'),totals=$('totals'),list=$('entries'),kind=$('kind'),more=$('more');
-  let cursor=null;
+  let cursor=null,watchTimer=null,lastMark=null,watchKey='';
+  const originalTitle=document.title;
   const text=(tag,s)=>{const el=document.createElement(tag);el.textContent=String(s);return el;};
   function sketch(drawing){
     const c=document.createElement('canvas');c.width=300;c.height=155;c.className='sketch';
@@ -51,6 +52,47 @@
     }catch(e){status.textContent=e.message||'Falha ao carregar.';}
     finally{clearTimeout(timeout);}
   }
+  function stopWatching(){
+    if(watchTimer!==null)clearInterval(watchTimer);
+    watchTimer=null;lastMark=null;watchKey='';
+    $('notify').textContent='Ativar avisos de novas marcas';
+  }
+  async function pollMarks(){
+    if(!watchKey||key.value!==watchKey){stopWatching();return false;}
+    try{
+      const response=await fetch(api+'/api/admin/notifications',{
+        headers:{Authorization:'Bearer '+watchKey},cache:'no-store'
+      });
+      if(!response.ok){stopWatching();status.textContent='Avisos parados: acesso não autorizado.';return false;}
+      const data=await response.json();
+      if(!Number.isSafeInteger(data.latest)||data.latest<0)throw Error('Resposta inválida.');
+      if(lastMark!==null&&data.latest>lastMark){
+        const howMany=data.latest-lastMark;
+        const message=howMany===1?'Uma nova marca chegou.':howMany+' novas marcas chegaram.';
+        status.textContent=message;
+        document.title='● '+originalTitle;
+        if('Notification' in window&&Notification.permission==='granted'){
+          try{new Notification('Nova marca no site',{body:message,tag:'nfc-nova-marca'});}catch{}
+        }
+      }
+      lastMark=data.latest;
+      return true;
+    }catch{status.textContent='Não foi possível verificar novas marcas agora.';return false;}
+  }
+  $('notify').addEventListener('click',async()=>{
+    if(watchTimer!==null){stopWatching();status.textContent='Avisos desativados.';return;}
+    if(!/^https:\/\/[A-Za-z0-9.-]+$/.test(api)||!key.value){status.textContent='Configure a API e informe sua chave.';return;}
+    if('Notification' in window&&Notification.permission==='default')await Notification.requestPermission();
+    watchKey=key.value;
+    if(!await pollMarks()){stopWatching();return;}
+    watchTimer=setInterval(pollMarks,45000);
+    $('notify').textContent='Desativar avisos';
+    status.textContent='Avisos ligados enquanto este painel estiver aberto.';
+  });
+  $('logout').addEventListener('click',()=>{
+    stopWatching();key.value='';cursor=null;list.replaceChildren();totals.textContent='';more.hidden=true;
+    document.title=originalTitle;status.textContent='Sessão encerrada neste painel.';
+  });
   $('load').addEventListener('click',()=>load(false));
   more.addEventListener('click',()=>load(true));
   kind.addEventListener('change',()=>{cursor=null;list.replaceChildren();more.hidden=true;});

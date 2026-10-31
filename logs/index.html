@@ -4,4 +4,5 @@
 </head><body><main><header><h1>/logs</h1><p>Somente quem possui a chave privada consegue consultar os registros. Ela não fica salva no dispositivo.</p></header>
 <label for="admin-key">Chave privada de administração</label><input id="admin-key" type="password" autocomplete="off" spellcheck="false" placeholder="Cole a chave do Worker">
 <div class="row"><select id="kind" aria-label="Tipo de log"><option value="visits">Aberturas</option><option value="messages">Mensagens e desenhos</option></select><button id="load">Carregar logs</button></div>
+<div class="row"><button id="notify" type="button">Ativar avisos de novas marcas</button><button id="logout" type="button">Sair</button></div><small>Os avisos funcionam só neste painel, enquanto ele estiver aberto e autenticado.</small>
 <p id="status" role="status">Painel aguardando conexão.</p><p id="totals"></p><div id="entries"></div><button id="more" hidden>Carregar mais</button></main></body></html>

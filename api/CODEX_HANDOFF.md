@@ -11,10 +11,12 @@ Painel de logs: https://nskge.github.io/nskge/logs/
 - O visitante pode enviar texto (140 caracteres) e um desenho em canvas (24 traços, 350 pontos no total). 
 - API separada em api/worker.js para Cloudflare Workers + banco D1 em api/schema.sql; arquivos de configuração em api/wrangler.toml.
 - Código do frontend: assets/party.js; painel privado em logs/index.html + assets/logs.js.
-- Configuração pública assets/config.js tem apiBase vazio; **a API ainda NÃO foi implantada**. Não declarar o sistema funcionando antes do teste real.
+- API implantada em https://nfc-0x0krr-api.nskge-0x0krr.workers.dev com D1 e Turnstile na conta Cloudflare do usuário. A URL pública está em assets/config.js. Confirmar os testes reais antes de declarar a experiência completa funcionando.
 - Não modificar README.md do perfil. Não armazenar mensagens/logs/segredos em arquivos estáticos no GitHub Pages. O painel /logs/ é público enquanto interface, mas a API exige Bearer ADMIN_SECRET.
 
 ## Objetivo próximo
+
+Os recursos Cloudflare já existem; não recriar D1, widget ou Worker. O painel tem avisos privados de novas marcas a cada 45 segundos enquanto estiver aberto e autenticado.
 
 1. Revisar a implementação inteira; executar \`node api/security-test.mjs\`, \`node --check\` nos JS e ampliar testes positivos de ponta a ponta.
 2. Resolver qualquer problema de script carregando antes do DOM, GIF quebrado, URLs internas, CORS, responsividade, canvas touch e painel.
