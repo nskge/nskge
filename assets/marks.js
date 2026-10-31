@@ -4,6 +4,7 @@
   const $=id=>document.getElementById(id);
   const writeTab=$('tab-write'),peopleTab=$('tab-people');
   const writePanel=$('write-panel'),peoplePanel=$('people-panel');
+  const closeWrite=$('close-write'),closePeople=$('close-people');
   const status=$('people-status'),list=$('people-list'),more=$('people-more');
   let cursor=null,loading=false;
 
@@ -12,7 +13,7 @@
     c.setAttribute('aria-label','Desenho enviado');
     const ctx=c.getContext('2d');
     ctx.fillStyle='#09090c';ctx.fillRect(0,0,c.width,c.height);
-    ctx.strokeStyle='#d5bdc6';ctx.fillStyle='#d5bdc6';ctx.lineWidth=2.5;ctx.lineCap='round';ctx.lineJoin='round';
+    ctx.strokeStyle='#eeeeee';ctx.fillStyle='#eeeeee';ctx.lineWidth=2.5;ctx.lineCap='round';ctx.lineJoin='round';
     if(!Array.isArray(drawing))return c;
     for(const stroke of drawing.slice(0,24)){
       if(!Array.isArray(stroke))continue;
@@ -51,10 +52,15 @@
     finally{clearTimeout(timer);loading=false;more.disabled=false;}
   }
   function show(people){
-    writeTab.setAttribute('aria-selected',String(!people));
-    peopleTab.setAttribute('aria-selected',String(people));
-    writePanel.hidden=people;peoplePanel.hidden=!people;
+    writeTab.setAttribute('aria-selected',String(!people));peopleTab.setAttribute('aria-selected',String(people));
+    writePanel.hidden=people;peoplePanel.hidden=!people;document.body.classList.add('panel-open');
+    (people?closePeople:closeWrite).focus();
     if(people)load(false);
+  }
+  function close(panel){
+    writePanel.hidden=true;peoplePanel.hidden=true;document.body.classList.remove('panel-open');
+    writeTab.setAttribute('aria-selected','false');peopleTab.setAttribute('aria-selected','false');
+    (panel==='people'?peopleTab:writeTab).focus();
   }
   writeTab.addEventListener('click',()=>show(false));
   peopleTab.addEventListener('click',()=>show(true));
@@ -63,5 +69,8 @@
       e.preventDefault();const people=tab===writeTab;show(people);(people?peopleTab:writeTab).focus();
     }
   });
+  closeWrite.addEventListener('click',()=>close('write'));
+  closePeople.addEventListener('click',()=>close('people'));
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&document.body.classList.contains('panel-open'))close(peoplePanel.hidden?'write':'people');});
   more.addEventListener('click',()=>load(true));
 })();

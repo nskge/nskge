@@ -9,7 +9,7 @@
   function sketch(drawing){
     const c=document.createElement('canvas');c.width=300;c.height=155;c.className='sketch';
     const ctx=c.getContext('2d');ctx.fillStyle='#09090c';ctx.fillRect(0,0,c.width,c.height);
-    ctx.strokeStyle='#d5bdc6';ctx.lineWidth=2.5;ctx.lineCap='round';ctx.lineJoin='round';
+    ctx.strokeStyle='#eeeeee';ctx.lineWidth=2.5;ctx.lineCap='round';ctx.lineJoin='round';
     if(!Array.isArray(drawing))return c;
     for(const stroke of drawing.slice(0,24)){
       if(!Array.isArray(stroke))continue;

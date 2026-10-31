@@ -33,7 +33,7 @@
   const pointCount=()=>lines.reduce((n,x)=>n+x.length,0);
   function redraw(){
     const w=canvas.width,h=canvas.height;ctx.fillStyle='#09090c';ctx.fillRect(0,0,w,h);
-    ctx.strokeStyle='#d5bdc6';ctx.fillStyle='#d5bdc6';ctx.lineWidth=3;ctx.lineCap='round';ctx.lineJoin='round';
+    ctx.strokeStyle='#eeeeee';ctx.fillStyle='#eeeeee';ctx.lineWidth=3;ctx.lineCap='round';ctx.lineJoin='round';
     for(const line of lines){
       if(!line.length)continue;
       if(line.length===1){ctx.beginPath();ctx.arc(line[0][0]*w,line[0][1]*h,1.7,0,2*Math.PI);ctx.fill();}
