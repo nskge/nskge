@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 570" role="img" aria-labelledby="title">
+<title id="title">Ilustração monocromática de um olho vermelho entre sombras e fios de cabelo</title>
+<defs>
+  <radialGradient id="red"><stop stop-color="#f21a35"/><stop offset=".4" stop-color="#b00019"/><stop offset="1" stop-color="#240107"/></radialGradient>
+  <linearGradient id="paper" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#b7b8bb"/><stop offset=".5" stop-color="#eeedf0"/><stop offset="1" stop-color="#63666d"/></linearGradient>
+  <pattern id="lines" width="5" height="5" patternUnits="userSpaceOnUse"><path d="M0 4.5H5" stroke="#0b090c" stroke-opacity=".33" stroke-width=".8"/></pattern>
+</defs>
+<rect width="720" height="570" fill="#0a090a"/>
+<path d="M75 570 112 320 128 200 205 87 322 18 515 30 614 156 651 331 649 570Z" fill="#1b1a1c"/>
+<path d="M128 561 167 331 192 218 253 120 421 64 571 176 604 316 584 500 505 568Z" fill="url(#paper)"/>
+<path d="M205 410 Q336 491 460 418 L520 500 461 569 190 569Z" fill="#0d0a0c"/>
+<path d="M90 560 164 359 190 316 160 216 183 112 294 19 452 24 583 104 628 216 576 184 543 128 522 257 473 171 419 290 408 148 331 262 344 121 262 270 262 170 209 319 170 241Z" fill="#090809"/>
+<path d="M144 238 196 98 300 24 419 0 570 64 624 175 558 107 523 207 461 103 421 229 392 103 331 231 294 102 243 259 210 159Z" fill="#e8e9ea"/>
+<g fill="none" stroke="#0c0b0e" stroke-width="6" opacity=".85"><path d="M206 43 270 189 234 312"/><path d="M322 10 345 179 302 314"/><path d="M448 17 417 207 372 290"/><path d="M556 79 513 229"/></g>
+<path d="M186 326Q275 283 375 308Q340 369 260 375Q202 366 186 326Z" fill="#131114"/>
+<path d="M209 324Q281 297 361 319Q325 359 264 355Q229 353 209 324Z" fill="#c1bfc5"/>
+<ellipse cx="285" cy="327" rx="43" ry="44" fill="#18090d"/>
+<circle cx="285" cy="327" r="31" fill="url(#red)"/>
+<circle cx="285" cy="327" r="15" fill="#090607"/>
+<circle cx="293" cy="317" r="6" fill="#fff" opacity=".8"/>
+<g stroke="#be031a" stroke-width="3" fill="none" opacity=".75"><path d="M230 346 188 383 206 390"/><path d="M232 351 214 407"/><path d="M331 350 386 382"/><path d="M302 365 311 403"/></g>
+<path d="M191 324Q267 270 370 302L365 317Q272 297 203 339Z" fill="#080608"/>
+<path d="M415 348Q472 306 541 329L523 358Q470 376 425 367Z" fill="#09090b"/>
+<path d="M456 425 472 453 459 461" fill="none" stroke="#353038" stroke-width="6"/>
+<path d="M374 483Q440 505 509 468" fill="none" stroke="#181218" stroke-width="8"/>
+<path d="M111 551 232 453 367 505 417 561Z" fill="#0a090a"/>
+<path d="M520 400 611 330 720 300 720 570 590 570Z" fill="#0a090a"/>
+<rect width="720" height="570" fill="url(#lines)" opacity=".33"/>
+<g stroke="#b60720" stroke-width="2" opacity=".5"><path d="M0 456 260 456"/><path d="M511 180 720 180"/><path d="M590 190 720 190"/><path d="M35 511 109 511"/></g>
+</svg>
