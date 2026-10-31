@@ -10,6 +10,13 @@ function headers(origin,env){
 function out(obj,status,origin,env){return new Response(JSON.stringify(obj),{status,headers:headers(origin,env)});}
 const bad=(code,detail)=>{throw {code,detail};};
 function checkedId(id){if(typeof id!=='string'||!uuid.test(id))bad(400,'Identificador inválido.');return id.toLowerCase();}
+function checkedName(raw){
+  if(typeof raw!=='string')bad(400,'Nome inválido.');
+  if(/[\p{C}\u202A-\u202E\u2066-\u2069]/u.test(raw))bad(400,'Nome inválido.');
+  const name=raw.trim().normalize('NFC').replace(/\s+/gu,' ');
+  if(!name||Array.from(name).length>32||enc.encode(name).length>128||!/^[\p{L}\p{M}\p{N} ._@'’-]+$/u.test(name))bad(400,'Use um nome ou apelido de até 32 caracteres.');
+  return name;
+}
 function checkedMessage(raw){
   if(typeof raw!=='string')bad(400,'Mensagem inválida.');
   const text=raw.trim().normalize('NFC');
@@ -32,6 +39,11 @@ function checkedDrawing(value){
   }
   if(JSON.stringify(result).length>9000)bad(413,'Desenho muito grande.');
   return result;
+}
+function checkedCursor(raw){
+  if(raw===null)return 2147483647;
+  if(!/^[1-9][0-9]{0,9}$/.test(raw)||Number(raw)>2147483647)bad(400,'Cursor inválido.');
+  return Number(raw);
 }
 async function bodyJSON(request){
   if(!/^application\/json(?:\s*;|$)/i.test(request.headers.get('Content-Type')||''))bad(415,'Formato inválido.');
@@ -97,6 +109,12 @@ async function main(request,env){
     const c=await env.DB.prepare('SELECT (SELECT COUNT(*) FROM visits) AS visits,(SELECT COUNT(DISTINCT visitor_id) FROM visits) AS visitors,(SELECT COUNT(DISTINCT visitor_id) FROM marks) AS makers').first();
     return out(c,200,origin,env);
   }
+  if(request.method==='GET'&&path==='/api/marks'){
+    const before=checkedCursor(url.searchParams.get('before'));
+    const result=await env.DB.prepare('SELECT id,name,message,drawing FROM marks WHERE id<? ORDER BY id DESC LIMIT 21').bind(before).all();
+    const page=result.results.slice(0,20);
+    return out({rows:page.map(x=>({name:x.name,message:x.message,drawing:JSON.parse(x.drawing)})),next:result.results.length>20?page.at(-1).id:null},200,origin,env);
+  }
   if(request.method==='POST'&&path==='/api/visit'){
     const value=await bodyJSON(request),id=checkedId(value.visitorId),m=minute(),hash=ipHash,d=info(request);
     // Count each opening, with atomic per-browser and per-IP ceilings against refresh spam.
@@ -106,7 +124,7 @@ async function main(request,env){
     return out(c,200,origin,env);
   }
   if(request.method==='POST'&&path==='/api/mark'){
-    const value=await bodyJSON(request),id=checkedId(value.visitorId),msg=checkedMessage(value.message),drawing=checkedDrawing(value.drawing);
+    const value=await bodyJSON(request),id=checkedId(value.visitorId),name=checkedName(value.name),msg=checkedMessage(value.message),drawing=checkedDrawing(value.drawing);
     if(!msg&&!drawing.length)return out({error:'Escreva ou desenhe alguma coisa.'},400,origin,env);
     if(value.website!=='')return out({error:'Não foi possível enviar.'},400,origin,env);
     const m=minute(),hash=ipHash;
@@ -115,8 +133,8 @@ async function main(request,env){
     if(limit.recent_ip>=30||limit.daily_ip>=300||limit.recent_visitor>=1||limit.daily_visitor>=3)return out({error:'Limite atingido. Tente mais tarde.'},429,origin,env);
     if(!await checkTurnstile(value.turnstile,env))return out({error:'Verificação antispam inválida.'},403,origin,env);
     const d=info(request);
-    const r=await env.DB.prepare('INSERT INTO marks(visitor_id,time_utc,minute_epoch,ip_hash,country,os,browser,message,drawing) SELECT ?,?,?,?,?,?,?,?,? WHERE (SELECT COUNT(*) FROM marks WHERE ip_hash=? AND minute_epoch>?)<30 AND (SELECT COUNT(*) FROM marks WHERE ip_hash=? AND minute_epoch>?)<300 AND (SELECT COUNT(*) FROM marks WHERE visitor_id=? AND minute_epoch>?)=0 AND (SELECT COUNT(*) FROM marks WHERE visitor_id=? AND minute_epoch>?)<3')
-      .bind(id,new Date().toISOString(),m,hash,d.country,d.os,d.browser,msg,JSON.stringify(drawing),hash,m-1,hash,m-1440,id,m-1,id,m-1440).run();
+    const r=await env.DB.prepare('INSERT INTO marks(visitor_id,time_utc,minute_epoch,ip_hash,country,os,browser,name,message,drawing) SELECT ?,?,?,?,?,?,?,?,?,? WHERE (SELECT COUNT(*) FROM marks WHERE ip_hash=? AND minute_epoch>?)<30 AND (SELECT COUNT(*) FROM marks WHERE ip_hash=? AND minute_epoch>?)<300 AND (SELECT COUNT(*) FROM marks WHERE visitor_id=? AND minute_epoch>?)=0 AND (SELECT COUNT(*) FROM marks WHERE visitor_id=? AND minute_epoch>?)<3')
+      .bind(id,new Date().toISOString(),m,hash,d.country,d.os,d.browser,name,msg,JSON.stringify(drawing),hash,m-1,hash,m-1440,id,m-1,id,m-1440).run();
     if((r.meta?.changes||0)!==1)return out({error:'Limite atingido. Tente mais tarde.'},429,origin,env);
     return out({ok:true},201,origin,env);
   }
@@ -127,11 +145,9 @@ async function main(request,env){
   }
   if(request.method==='GET'&&(path==='/api/admin/visits'||path==='/api/admin/messages')){
     if(!await adminOK(request,env))return out({error:'Acesso negado.'},401,origin,env);
-    const raw=url.searchParams.get('before');
-    if(raw&&!/^[1-9][0-9]{0,9}$/.test(raw))return out({error:'Cursor inválido.'},400,origin,env);
-    const before=raw?Number(raw):2147483647,marks=path.endsWith('/messages');
+    const before=checkedCursor(url.searchParams.get('before')),marks=path.endsWith('/messages');
     const table=marks?'marks':'visits';
-    const columns=marks?'id,visitor_id,time_utc,country,os,browser,message,drawing':'id,visitor_id,time_utc,country,os,browser';
+    const columns=marks?'id,visitor_id,time_utc,country,os,browser,name,message,drawing':'id,visitor_id,time_utc,country,os,browser';
     const result=await env.DB.prepare('SELECT '+columns+' FROM '+table+' WHERE id<? ORDER BY id DESC LIMIT 50').bind(before).all();
     const total=await env.DB.prepare('SELECT (SELECT COUNT(*) FROM visits) AS visits,(SELECT COUNT(DISTINCT visitor_id) FROM visits) AS visitors,(SELECT COUNT(DISTINCT visitor_id) FROM marks) AS makers,(SELECT COUNT(*) FROM marks) AS messages').first();
     const rows=result.results.map(x=>({...x,visitor_id:x.visitor_id.slice(0,8),...(marks?{drawing:JSON.parse(x.drawing)}:{})}));

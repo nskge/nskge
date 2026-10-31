@@ -4,7 +4,7 @@
   const api=(window.NFC_SITE_CONFIG?.apiBase||'').replace(/\/$/, '');
   const $=id=>document.getElementById(id);
   const canvas=$('draw'),ctx=canvas.getContext('2d',{alpha:false});
-  const input=$('message'),count=$('count'),status=$('submit-status'),button=$('send-mark'),counter=$('visitor-count');
+  const input=$('message'),nameInput=$('name'),count=$('count'),status=$('submit-status'),button=$('send-mark'),counter=$('visitor-count');
   const hero=$('hero-gif');
   const gifs=['/nskge/assets/juuzou.gif','/nskge/assets/juuzou-alt.gif'];
   try{
@@ -23,9 +23,9 @@
   }catch{visitorId=crypto.randomUUID();}
   const say=s=>{status.textContent=s;};
   const renderCounter=v=>{
-    const visitors=Number(v.visitors),makers=Number(v.makers),visits=Number(v.visits);
-    if(![visitors,makers,visits].every(Number.isSafeInteger))return;
-    counter.textContent=visitors.toLocaleString('pt-BR')+(visitors===1?' passou · ':' passaram · ')+makers.toLocaleString('pt-BR')+(makers===1?' deixou marca · ':' deixaram marca · ')+visits.toLocaleString('pt-BR')+(visits===1?' abertura':' aberturas');
+    const visits=Number(v.visits);
+    if(!Number.isSafeInteger(visits))return;
+    counter.textContent=visits.toLocaleString('pt-BR')+(visits===1?' visita ao site':' visitas ao site');
     counter.hidden=false;
   };
   const clamp=x=>Math.max(0,Math.min(1,x));
@@ -77,13 +77,15 @@
   };
   button.addEventListener('click',async()=>{
     if(!ready){say('Recados ainda não estão ativados.');return;}
+    const name=nameInput.value.trim();
+    if(!name){say('Coloque seu nome ou apelido.');nameInput.focus();return;}
     const message=input.value.trim();
     if(!message&&!lines.length){say('Escreva ou desenhe alguma coisa.');return;}
     if(!token){say('Conclua a verificação antispam primeiro.');return;}
     button.disabled=true;say('enviando...');
     try{
-      await call('/api/mark',{visitorId,message,drawing:lines,website:$('website').value,turnstile:token});
-      input.value='';count.textContent='0/140';lines=[];redraw();say('sua marca foi salva.');
+      await call('/api/mark',{visitorId,name,message,drawing:lines,website:$('website').value,turnstile:token});
+      nameInput.value='';input.value='';count.textContent='0/140';lines=[];redraw();say('sua marca foi salva.');
       try{renderCounter(await call('/api/summary'));}catch{}
     }catch(e){say(e.message||'Não foi possível enviar.');}
     finally{button.disabled=false;reset();}

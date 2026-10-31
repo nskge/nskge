@@ -6,6 +6,11 @@ const source=await readFile(new URL('./worker.js',import.meta.url),'utf8');
 const worker=(await import('data:text/javascript;charset=utf-8,'+encodeURIComponent(source))).default;
 const db=new DatabaseSync(':memory:');
 db.exec(await readFile(new URL('./schema.sql',import.meta.url),'utf8'));
+const oldDb=new DatabaseSync(':memory:');
+oldDb.exec("CREATE TABLE marks(id INTEGER PRIMARY KEY, message TEXT NOT NULL); INSERT INTO marks(message) VALUES('old mark');");
+oldDb.exec(await readFile(new URL('./migrations/0002_mark_names.sql',import.meta.url),'utf8'));
+assert.equal(oldDb.prepare('SELECT name FROM marks').get().name,'anônimo');
+oldDb.close();
 const DB={prepare(sql){let args=[];return {
   bind(...values){args=values;return this;},
   async first(){return db.prepare(sql).get(...args)??null;},
@@ -26,7 +31,7 @@ async function call(path,{method='GET',origin=env.ALLOWED_ORIGIN,headers={},body
   const response=await worker.fetch(req,env);
   return {status:response.status,data:method==='OPTIONS'?null:await response.json(),headers:response.headers};
 }
-const mark=(data,extra={})=>call('/api/mark',{method:'POST',body:{visitorId:id,message:'oi',drawing:[],website:'',turnstile:'good',...data},...extra});
+const mark=(data,extra={})=>call('/api/mark',{method:'POST',body:{visitorId:id,name:"D'Ávila",message:'oi',drawing:[],website:'',turnstile:'good',...data},...extra});
 const visit=(visitorId=id,extra={})=>call('/api/visit',{method:'POST',body:{visitorId},...extra});
 async function check(label,promise,status){const r=await promise;assert.equal(r.status,status,label+': '+JSON.stringify(r.data));console.log('OK',label);return r;}
 try{
@@ -50,6 +55,14 @@ try{
   await check('malformed JSON',call('/api/visit',{method:'POST',body:'{',raw:true}),400);
   await check('array JSON',call('/api/visit',{method:'POST',body:'[]',raw:true}),400);
   await check('large body without Content-Length',call('/api/visit',{method:'POST',body:' '.repeat(16385),raw:true}),413);
+  await check('missing name',mark({name:undefined}),400);
+  await check('empty name',mark({name:'   '}),400);
+  await check('name object',mark({name:{toString:'Ana'}}),400);
+  await check('name over 32 characters',mark({name:'A'.repeat(33)}),400);
+  await check('name HTML payload',mark({name:'<img onerror=alert(1)>'}),400);
+  await check('name SQL payload',mark({name:"Ana' OR 1=1 --"}),400);
+  await check('name bidi control',mark({name:'Ana\u202e'}),400);
+  await check('name newline',mark({name:'Ana\nBia'}),400);
   await check('message object',mark({message:{a:1}}),400);
   await check('141 characters',mark({message:'a'.repeat(141)}),400);
   await check('bidi control',mark({message:'hi\u202e'}),400);
@@ -72,10 +85,22 @@ try{
   const injected="<img src=x onerror=alert('x')>' OR 1=1 --",drawing=[[[0,0],[.5,.5],[1,1]]];
   await check('message and drawing saved',mark({message:injected,drawing}),201);
   assert.equal(db.prepare('SELECT message FROM marks').get().message,injected);
+  assert.equal(db.prepare('SELECT name FROM marks').get().name,"D'Ávila");
   assert.equal(db.prepare('SELECT drawing FROM marks').get().drawing,JSON.stringify(drawing));
+  r=await check('public marks read',call('/api/marks'),200);
+  assert.deepEqual(Object.keys(r.data.rows[0]).sort(),['drawing','message','name']);
+  assert.equal(r.data.rows[0].name,"D'Ávila");
+  assert.equal(r.data.rows[0].message,injected);
+  assert.deepEqual(r.data.rows[0].drawing,drawing);
+  assert.equal(r.data.next,null);
+  await check('public marks foreign Origin',call('/api/marks',{origin:'https://attacker.example'}),403);
+  await check('public marks malicious cursor',call('/api/marks?before=1%20OR%201=1'),400);
+  await check('public marks empty cursor',call('/api/marks?before='),400);
+  await check('public marks oversized cursor',call('/api/marks?before=9999999999'),400);
   await check('same minute rate limit',mark({message:'again'}),429);
   r=await check('admin reads saved mark',call('/api/admin/messages',{headers:admin}),200);
   assert.equal(r.data.rows[0].message,injected);assert.deepEqual(r.data.rows[0].drawing,drawing);
+  assert.equal(r.data.rows[0].name,"D'Ávila");
   assert.equal('ip_hash' in r.data.rows[0],false);
   r=await check('private notification',call('/api/admin/notifications',{headers:admin}),200);assert.equal(r.data.latest,1);
   await check('malicious cursor',call('/api/admin/messages?before=1%20OR%201=1',{headers:admin}),400);
@@ -89,9 +114,15 @@ try{
   db.prepare('UPDATE marks SET minute_epoch=? WHERE ip_hash=?').run(minute-2,ipHash);
   for(let i=0;i<299;i++)insert.run(otherId,new Date().toISOString(),minute-2,ipHash,'BR','outro','outro','test','[]');
   await check('three hundred marks per IP per day',mark({visitorId:otherId,message:'over daily limit'}),429);
+  r=await check('public marks pagination',call('/api/marks'),200);
+  assert.equal(r.data.rows.length,20);assert(Number.isSafeInteger(r.data.next));
+  const secondPage=await check('public marks next page',call('/api/marks?before='+r.data.next),200);
+  assert.equal(secondPage.data.rows.length,20);
   const frontend=await readFile(new URL('../assets/logs.js',import.meta.url),'utf8');
   assert(frontend.includes('el.textContent=String(s)')&&!frontend.includes('innerHTML'));
   assert(frontend.includes("document.createElement('canvas')"));
+  const publicFrontend=await readFile(new URL('../assets/marks.js',import.meta.url),'utf8');
+  assert(publicFrontend.includes('textContent=String(entry.name')&&!publicFrontend.includes('innerHTML'));
   console.log('OK SQL binding, XSS rendering, public data isolation');
   console.log('All integration and security checks passed');
 }finally{globalThis.fetch=oldFetch;db.close();}

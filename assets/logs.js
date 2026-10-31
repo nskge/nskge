@@ -39,7 +39,7 @@
         const el=document.createElement('article');el.className='entry';
         const date=new Date(entry.time_utc);
         const when=Number.isNaN(date.valueOf())?'horário inválido':date.toLocaleString('pt-BR',{dateStyle:'short',timeStyle:'medium'});
-        el.append(text('div','#'+entry.visitor_id+' • '+when));
+        el.append(text('div',(type==='messages'?entry.name+' · ':'')+'#'+entry.visitor_id+' • '+when));
         el.append(text('small',entry.country+' • '+entry.os+' • '+entry.browser));
         if(type==='messages'){
           if(entry.message)el.append(text('p',entry.message));

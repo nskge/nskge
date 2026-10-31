@@ -1,8 +1,8 @@
-# 0x0krr — guestbook NFC
+# 0x0krr — mural NFC
 
 Site estático em GitHub Pages; API em Cloudflare Workers + D1. O backend foi implantado na conta Cloudflare do projeto em https://nfc-0x0krr-api.nskge-0x0krr.workers.dev. O widget Turnstile aceita somente `nskge.github.io`.
 
-O diretório público **/logs/** contém somente o **painel**, sem dados privados. Não coloque logs reais, tokens, chaves ou mensagens dentro do repositório GitHub.
+O diretório público **/logs/** contém somente o **painel**, sem dados privados. A aba **mensagens** no site mostra nome, mensagem e desenho enviados pelos visitantes. Horário, UUID, país, sistema e navegador ficam restritos às rotas administrativas. Não coloque logs reais, tokens, chaves ou mensagens dentro do repositório GitHub.
 
 ## Instalação do backend (referência; recursos já criados)
 
@@ -24,7 +24,8 @@ O frontend usa a URL pública em `assets/config.js`. Se a API estiver indisponí
 ## Dados e segurança
 
 - Cada navegador recebe um ID aleatório UUID v4. **Não é um identificador confiável de pessoa**: pode ser trocado.
-- A página mostra visitantes aproximados, aberturas e o número de IDs distintos que deixaram marca. O GIF local alterna entre duas cenas do Juuzou a cada abertura no mesmo navegador.
+- Nome ou apelido é obrigatório para novas marcas (até 32 caracteres) e aparece publicamente junto com texto/desenho. Marcas anteriores à migração `migrations/0002_mark_names.sql` aparecem como “anônimo”. A rota pública `/api/marks` devolve no máximo 20 marcas por página e nunca inclui UUID ou metadados de acesso.
+- A página mostra somente o número de visitas ao site; os totais de visitantes distintos e de quem deixou marca permanecem no painel privado. O GIF local alterna entre duas cenas do Juuzou a cada abertura no mesmo navegador.
 - A API anota horário UTC, país, tipo aproximado de sistema operacional e navegador, e ID curto para associar visitas e mensagens. Não captura endereço MAC, localização precisa ou IP em texto.
 - O IP no servidor é utilizado para **HMAC (hash com chave secreta)**, apenas para controle de abuso, sem ser mostrado no painel.
 - Mensagem: no máximo **140 caracteres** e **560 bytes**, rejeitando códigos de controle e caracteres de spoofing bidi.
