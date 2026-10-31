@@ -87,15 +87,18 @@ async function main(request,env){
   const allowed=origin===env.ALLOWED_ORIGIN;
   if(request.method==='OPTIONS')return new Response(null,{status:allowed?204:403,headers:headers(origin,env)});
   if(!allowed)return out({error:'Origem não permitida.'},403,origin,env);
-  if(!env.DB||!env.IP_HASH_SECRET||!env.ADMIN_SECRET||!env.TURNSTILE_SECRET_KEY||!env.TURNSTILE_SITE_KEY||env.TURNSTILE_SITE_KEY.startsWith('REPLACE'))return out({error:'API não configurada.'},503,origin,env);
+  if(!env.DB||!env.IP_HASH_SECRET||!env.ADMIN_SECRET||!env.TURNSTILE_SECRET_KEY||!env.TURNSTILE_SITE_KEY||env.TURNSTILE_SITE_KEY.startsWith('REPLACE')||!env.PUBLIC_RATE_LIMIT||!env.ADMIN_RATE_LIMIT)return out({error:'API não configurada.'},503,origin,env);
   const path=url.pathname;
+  const ipHash=await hashedIP(request,env);
+  const limiter=path.startsWith('/api/admin/')?env.ADMIN_RATE_LIMIT:env.PUBLIC_RATE_LIMIT;
+  if(!(await limiter.limit({key:ipHash})).success)return out({error:'Muitas requisições. Tente mais tarde.'},429,origin,env);
   if(request.method==='GET'&&path==='/api/config')return out({enabled:true,siteKey:env.TURNSTILE_SITE_KEY},200,origin,env);
   if(request.method==='GET'&&path==='/api/summary'){
     const c=await env.DB.prepare('SELECT COUNT(*) AS visits,COUNT(DISTINCT visitor_id) AS visitors FROM visits').first();
     return out(c,200,origin,env);
   }
   if(request.method==='POST'&&path==='/api/visit'){
-    const value=await bodyJSON(request),id=checkedId(value.visitorId),m=minute(),hash=await hashedIP(request,env),d=info(request);
+    const value=await bodyJSON(request),id=checkedId(value.visitorId),m=minute(),hash=ipHash,d=info(request);
     // Count each opening, with atomic per-browser and per-IP ceilings against refresh spam.
     await env.DB.prepare('INSERT INTO visits(visitor_id,time_utc,minute_epoch,ip_hash,country,os,browser) SELECT ?,?,?,?,?,?,? WHERE (SELECT COUNT(*) FROM visits WHERE visitor_id=? AND minute_epoch>?)<20 AND (SELECT COUNT(*) FROM visits WHERE ip_hash=? AND minute_epoch>?)<100')
       .bind(id,new Date().toISOString(),m,hash,d.country,d.os,d.browser,id,m-60,hash,m-60).run();
@@ -106,14 +109,14 @@ async function main(request,env){
     const value=await bodyJSON(request),id=checkedId(value.visitorId),msg=checkedMessage(value.message),drawing=checkedDrawing(value.drawing);
     if(!msg&&!drawing.length)return out({error:'Escreva ou desenhe alguma coisa.'},400,origin,env);
     if(value.website!=='')return out({error:'Não foi possível enviar.'},400,origin,env);
-    const m=minute(),hash=await hashedIP(request,env);
-    const limit=await env.DB.prepare('SELECT (SELECT COUNT(*) FROM marks WHERE ip_hash=? AND minute_epoch>?) AS recent,(SELECT COUNT(*) FROM marks WHERE ip_hash=? AND minute_epoch>?) AS daily,(SELECT COUNT(*) FROM marks WHERE visitor_id=? AND minute_epoch>?) AS visitor')
-      .bind(hash,m-1,hash,m-1440,id,m-1440).first();
-    if(limit.recent>=1||limit.daily>=12||limit.visitor>=3)return out({error:'Limite atingido. Tente mais tarde.'},429,origin,env);
+    const m=minute(),hash=ipHash;
+    const limit=await env.DB.prepare('SELECT (SELECT COUNT(*) FROM marks WHERE ip_hash=? AND minute_epoch>?) AS recent_ip,(SELECT COUNT(*) FROM marks WHERE ip_hash=? AND minute_epoch>?) AS daily_ip,(SELECT COUNT(*) FROM marks WHERE visitor_id=? AND minute_epoch>?) AS recent_visitor,(SELECT COUNT(*) FROM marks WHERE visitor_id=? AND minute_epoch>?) AS daily_visitor')
+      .bind(hash,m-1,hash,m-1440,id,m-1,id,m-1440).first();
+    if(limit.recent_ip>=30||limit.daily_ip>=300||limit.recent_visitor>=1||limit.daily_visitor>=3)return out({error:'Limite atingido. Tente mais tarde.'},429,origin,env);
     if(!await checkTurnstile(value.turnstile,env))return out({error:'Verificação antispam inválida.'},403,origin,env);
     const d=info(request);
-    const r=await env.DB.prepare('INSERT INTO marks(visitor_id,time_utc,minute_epoch,ip_hash,country,os,browser,message,drawing) SELECT ?,?,?,?,?,?,?,?,? WHERE (SELECT COUNT(*) FROM marks WHERE ip_hash=? AND minute_epoch>?)=0 AND (SELECT COUNT(*) FROM marks WHERE ip_hash=? AND minute_epoch>?)<12 AND (SELECT COUNT(*) FROM marks WHERE visitor_id=? AND minute_epoch>?)<3')
-      .bind(id,new Date().toISOString(),m,hash,d.country,d.os,d.browser,msg,JSON.stringify(drawing),hash,m-1,hash,m-1440,id,m-1440).run();
+    const r=await env.DB.prepare('INSERT INTO marks(visitor_id,time_utc,minute_epoch,ip_hash,country,os,browser,message,drawing) SELECT ?,?,?,?,?,?,?,?,? WHERE (SELECT COUNT(*) FROM marks WHERE ip_hash=? AND minute_epoch>?)<30 AND (SELECT COUNT(*) FROM marks WHERE ip_hash=? AND minute_epoch>?)<300 AND (SELECT COUNT(*) FROM marks WHERE visitor_id=? AND minute_epoch>?)=0 AND (SELECT COUNT(*) FROM marks WHERE visitor_id=? AND minute_epoch>?)<3')
+      .bind(id,new Date().toISOString(),m,hash,d.country,d.os,d.browser,msg,JSON.stringify(drawing),hash,m-1,hash,m-1440,id,m-1,id,m-1440).run();
     if((r.meta?.changes||0)!==1)return out({error:'Limite atingido. Tente mais tarde.'},429,origin,env);
     return out({ok:true},201,origin,env);
   }

@@ -16,3 +16,17 @@ database_id = "abb80bcd-8c04-4d6e-972d-5e9aa670a116"
 
 [triggers]
 crons = ["0 5 * * *"]
+
+[[ratelimits]]
+name = "PUBLIC_RATE_LIMIT"
+namespace_id = "1001"
+  [ratelimits.simple]
+  limit = 300
+  period = 60
+
+[[ratelimits]]
+name = "ADMIN_RATE_LIMIT"
+namespace_id = "1002"
+  [ratelimits.simple]
+  limit = 30
+  period = 60

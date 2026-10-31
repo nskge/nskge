@@ -12,7 +12,8 @@ const DB={prepare(sql){let args=[];return {
   async all(){return {results:db.prepare(sql).all(...args)};},
   async run(){return {meta:{changes:Number(db.prepare(sql).run(...args).changes)}};}
 };}};
-const env={DB,IP_HASH_SECRET:'a'.repeat(64),ADMIN_SECRET:'b'.repeat(64),TURNSTILE_SECRET_KEY:'c',TURNSTILE_SITE_KEY:'sitekey',ALLOWED_ORIGIN:'https://nskge.github.io',EXPECTED_HOSTNAME:'nskge.github.io'};
+const allow={limit:async()=>({success:true})};
+const env={DB,IP_HASH_SECRET:'a'.repeat(64),ADMIN_SECRET:'b'.repeat(64),TURNSTILE_SECRET_KEY:'c',TURNSTILE_SITE_KEY:'sitekey',ALLOWED_ORIGIN:'https://nskge.github.io',EXPECTED_HOSTNAME:'nskge.github.io',PUBLIC_RATE_LIMIT:allow,ADMIN_RATE_LIMIT:allow};
 const id='d7f4f658-7811-4cbc-b4c9-a6b3e842be55',otherId='7c65bb2e-5dae-435f-a6dd-744a883fe52d';
 const admin={Authorization:'Bearer '+env.ADMIN_SECRET};
 const oldFetch=globalThis.fetch;
@@ -38,6 +39,12 @@ try{
   await check('admin wrong bearer',call('/api/admin/messages',{headers:{Authorization:'Bearer '+'x'.repeat(64)}}),401);
   await check('admin foreign Origin',call('/api/admin/messages',{origin:'https://attacker.example',headers:admin}),403);
   await check('notifications without bearer',call('/api/admin/notifications'),401);
+  env.PUBLIC_RATE_LIMIT={limit:async()=>({success:false})};
+  await check('public edge request limit',call('/api/summary'),429);
+  env.PUBLIC_RATE_LIMIT=allow;
+  env.ADMIN_RATE_LIMIT={limit:async()=>({success:false})};
+  await check('admin edge request limit',call('/api/admin/messages',{headers:admin}),429);
+  env.ADMIN_RATE_LIMIT=allow;
   await check('invalid UUID',visit('<script>'),400);
   await check('non JSON',call('/api/visit',{method:'POST',headers:{'Content-Type':'text/plain'},body:'{}',raw:true}),415);
   await check('malformed JSON',call('/api/visit',{method:'POST',body:'{',raw:true}),400);
@@ -80,8 +87,8 @@ try{
   for(let i=0;i<2;i++)insert.run(id,new Date().toISOString(),minute-2,'other-ip-'+i,'BR','outro','outro','test','[]');
   await check('three marks per browser per day',mark({message:'fourth'},{ip:'203.0.113.2'}),429);
   db.prepare('UPDATE marks SET minute_epoch=? WHERE ip_hash=?').run(minute-2,ipHash);
-  for(let i=0;i<11;i++)insert.run(otherId,new Date().toISOString(),minute-2,ipHash,'BR','outro','outro','test','[]');
-  await check('twelve marks per IP per day',mark({visitorId:otherId,message:'thirteenth'}),429);
+  for(let i=0;i<299;i++)insert.run(otherId,new Date().toISOString(),minute-2,ipHash,'BR','outro','outro','test','[]');
+  await check('three hundred marks per IP per day',mark({visitorId:otherId,message:'over daily limit'}),429);
   const frontend=await readFile(new URL('../assets/logs.js',import.meta.url),'utf8');
   assert(frontend.includes('el.textContent=String(s)')&&!frontend.includes('innerHTML'));
   assert(frontend.includes("document.createElement('canvas')"));

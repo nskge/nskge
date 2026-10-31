@@ -29,7 +29,8 @@ O frontend usa a URL pública em `assets/config.js`. Se a API estiver indisponí
 - Mensagem: no máximo **140 caracteres** e **560 bytes**, rejeitando códigos de controle e caracteres de spoofing bidi.
 - Desenho: somente array de pontos numéricos normalizados [0,1], com limites de **24 traços, 80 pontos por traço e 350 pontos no total**. Nenhum SVG, imagem, HTML ou arquivo é aceito.
 - Corpo JSON limitado a **16 KiB**, inclusive quando o cliente omite o Content-Length.
-- Limites de mensagem por servidor: **1/minuto por IP**, **12/dia por IP**, **3/dia por navegador**, com verificação **Cloudflare Turnstile no servidor** (hostname e action verificados, token de uso único).
+- Limites de mensagem por servidor: **1/minuto e 3/dia por navegador**, **30/minuto e 300/dia por IP compartilhado**, com verificação **Cloudflare Turnstile no servidor** (hostname e action verificados, token de uso único). As inserções D1 verificam os tetos na mesma instrução SQL.
+- Um limite adicional na borda aceita até 300 requisições públicas/minuto e 30 requisições administrativas/minuto por hash de IP. Esse limite da Cloudflare é aproximado e local por datacenter; os limites de gravação em D1 são a proteção estrita.
 - Cada abertura é contada, até **20 por navegador e 100 por IP por hora**. O número de visitantes é aproximado e usa UUID aleatório por navegador.
 - SQL em D1 usa \`prepare().bind()\`, o painel renderiza textos com \`textContent\` e o desenho com Canvas (sem \`innerHTML\`).
 - \`/logs/\` tem interface pública, mas a **API dos registros exige Bearer ADMIN_SECRET** e devolve no máximo 50 resultados por página.
