@@ -39,9 +39,11 @@
     loading=true;more.disabled=true;status.textContent='carregando mensagens...';
     const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),8000);
     try{
+      if(window.NFC_ACCESS?.ready)await window.NFC_ACCESS.ready;
       const query=append&&cursor?'?before='+encodeURIComponent(String(cursor)):'';
-      const response=await fetch(api+'/api/marks'+query,{mode:'cors',cache:'no-store',signal:controller.signal});
+      const response=await fetch(api+'/api/marks'+query,{mode:'cors',cache:'no-store',signal:controller.signal,headers:{'X-Site-Access':window.NFC_ACCESS?.token||''}});
       const data=await response.json();
+      if(response.status===401&&window.NFC_ACCESS?.lock)window.NFC_ACCESS.lock();
       if(!response.ok||!Array.isArray(data.rows))throw Error('Não foi possível carregar as marcas.');
       if(!append)list.replaceChildren();
       for(const entry of data.rows.slice(0,20))list.append(markCard(entry));

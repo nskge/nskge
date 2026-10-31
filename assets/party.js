@@ -60,8 +60,10 @@
   async function call(path,data){
     const controller=new AbortController(),timeout=setTimeout(()=>controller.abort(),7500);
     try{
-      const r=await fetch(api+path,{method:data?'POST':'GET',mode:'cors',cache:'no-store',signal:controller.signal,headers:data?{'Content-Type':'application/json'}:{},body:data?JSON.stringify(data):undefined});
+      const access=window.NFC_ACCESS?.token||'';
+      const r=await fetch(api+path,{method:data?'POST':'GET',mode:'cors',cache:'no-store',signal:controller.signal,headers:{...(data?{'Content-Type':'application/json'}:{}),'X-Site-Access':access},body:data?JSON.stringify(data):undefined});
       const result=await r.json().catch(()=>({}));
+      if(r.status===401&&window.NFC_ACCESS?.lock)window.NFC_ACCESS.lock();
       if(!r.ok)throw Error(result.error||'Serviço indisponível.');
       return result;
     }finally{clearTimeout(timeout);}
@@ -93,13 +95,13 @@
   async function init(){
     if(!/^https:\/\/[A-Za-z0-9.-]+$/.test(api)){button.disabled=true;say('recados em configuração');return;}
     try{
+      if(window.NFC_ACCESS?.ready)await window.NFC_ACCESS.ready;
       const config=await call('/api/config');
       if(!config.enabled||typeof config.siteKey!=='string'||!/^[A-Za-z0-9_-]+$/.test(config.siteKey))throw Error();
       ready=true;button.disabled=false;say('pode escrever ou desenhar sua marca.');
       window.partyTurnstileKey=config.siteKey;
-      const script=document.createElement('script');
-      script.src='https://challenges.cloudflare.com/turnstile/v0/api.js?onload=partyTurnstileLoaded&render=explicit';
-      script.async=true;script.defer=true;document.head.append(script);
+      if(window.turnstile)window.partyTurnstileLoaded();
+      else{const script=document.createElement('script');script.src='https://challenges.cloudflare.com/turnstile/v0/api.js?onload=partyTurnstileLoaded&render=explicit';script.async=true;script.defer=true;document.head.append(script);}
       const v=await call('/api/visit',{visitorId});
       renderCounter(v);
     }catch{button.disabled=true;say('recados temporariamente indisponíveis.');}

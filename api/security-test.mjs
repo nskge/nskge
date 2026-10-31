@@ -18,13 +18,14 @@ const DB={prepare(sql){let args=[];return {
   async run(){return {meta:{changes:Number(db.prepare(sql).run(...args).changes)}};}
 };}};
 const allow={limit:async()=>({success:true})};
-const env={DB,IP_HASH_SECRET:'a'.repeat(64),ADMIN_SECRET:'b'.repeat(64),TURNSTILE_SECRET_KEY:'c',TURNSTILE_SITE_KEY:'sitekey',ALLOWED_ORIGIN:'https://nskge.github.io',EXPECTED_HOSTNAME:'nskge.github.io',PUBLIC_RATE_LIMIT:allow,ADMIN_RATE_LIMIT:allow};
+const env={DB,IP_HASH_SECRET:'a'.repeat(64),ADMIN_SECRET:'b'.repeat(64),SITE_PASSWORD:'local-test-only',ACCESS_SESSION_SECRET:'d'.repeat(64),ACCESS_REQUIRED:'true',TURNSTILE_SECRET_KEY:'c',TURNSTILE_SITE_KEY:'sitekey',ALLOWED_ORIGIN:'https://nskge.github.io',EXPECTED_HOSTNAME:'nskge.github.io',PUBLIC_RATE_LIMIT:allow,ADMIN_RATE_LIMIT:allow,ACCESS_RATE_LIMIT:allow};
 const id='d7f4f658-7811-4cbc-b4c9-a6b3e842be55',otherId='7c65bb2e-5dae-435f-a6dd-744a883fe52d';
 const admin={Authorization:'Bearer '+env.ADMIN_SECRET};
 const oldFetch=globalThis.fetch;
-globalThis.fetch=async(_url,options)=>{const token=options.body.get('response');return {ok:true,json:async()=>({success:token!=='bad',hostname:token==='wrong-host'?'attacker.example':'nskge.github.io',action:token==='wrong-action'?'other':'message'})};};
+globalThis.fetch=async(_url,options)=>{const token=options.body.get('response');return {ok:true,json:async()=>({success:token!=='bad',hostname:token==='wrong-host'?'attacker.example':'nskge.github.io',action:token==='wrong-action'?'other':token==='access'?'access':'message'})};};
+let siteToken='';
 async function call(path,{method='GET',origin=env.ALLOWED_ORIGIN,headers={},body,ip='203.0.113.1',raw=false}={}){
-  const h=new Headers({'CF-Connecting-IP':ip,...headers});if(origin!==null)h.set('Origin',origin);
+  const h=new Headers({'CF-Connecting-IP':ip,...(siteToken&&path!=='/api/access'?{'X-Site-Access':siteToken}:{}),...headers});if(origin!==null)h.set('Origin',origin);
   if(body!==undefined&&!h.has('Content-Type'))h.set('Content-Type','application/json');
   const req=new Request('https://worker.example'+path,{method,headers:h,body:body===undefined?undefined:raw?body:JSON.stringify(body)});
   Object.defineProperty(req,'cf',{value:{country:'BR'}});
@@ -36,6 +37,14 @@ const visit=(visitorId=id,extra={})=>call('/api/visit',{method:'POST',body:{visi
 async function check(label,promise,status){const r=await promise;assert.equal(r.status,status,label+': '+JSON.stringify(r.data));console.log('OK',label);return r;}
 try{
   await check('config',call('/api/config'),200);
+  await check('protected summary without access',call('/api/summary'),401);
+  await check('protected marks without access',call('/api/marks'),401);
+  await check('wrong site password',call('/api/access',{method:'POST',body:{password:'wrong',turnstile:'access',website:''}}),401);
+  await check('invalid access challenge',call('/api/access',{method:'POST',body:{password:env.SITE_PASSWORD,turnstile:'bad',website:''}}),403);
+  const access=await check('valid site password',call('/api/access',{method:'POST',body:{password:env.SITE_PASSWORD,turnstile:'access',website:''}}),200);
+  siteToken=access.data.token;
+  await check('valid access session',call('/api/access',{headers:{'X-Site-Access':siteToken}}),200);
+  await check('forged access session',call('/api/access',{headers:{'X-Site-Access':siteToken.slice(0,-1)+'x'}}),401);
   await check('foreign Origin',call('/api/config',{origin:'https://attacker.example'}),403);
   await check('missing Origin',call('/api/config',{origin:null}),403);
   await check('CORS preflight',call('/api/mark',{method:'OPTIONS'}),204);

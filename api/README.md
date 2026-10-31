@@ -4,6 +4,14 @@ Site estático em GitHub Pages; API em Cloudflare Workers + D1. O backend foi im
 
 O diretório público **/logs/** contém somente o **painel**, sem dados privados. A aba **mensagens** no site mostra nome, mensagem e desenho enviados pelos visitantes. Horário, UUID, país, sistema e navegador ficam restritos às rotas administrativas. Não coloque logs reais, tokens, chaves ou mensagens dentro do repositório GitHub.
 
+## Senha de entrada
+
+O site mostra uma tela de senha antes da interface. O Worker confere a senha guardada em `SITE_PASSWORD`, valida Turnstile e libera uma sessão assinada de 12 horas no `sessionStorage` do navegador. O endpoint `/api/access` aceita no máximo 5 tentativas por minuto por hash de IP. As rotas públicas de visitas e marcas exigem a sessão. A senha não fica no GitHub nem no JavaScript público.
+
+Para trocar a senha, entre com sua conta Cloudflare, abra o terminal em `api/` e execute `npx.cmd --yes wrangler secret put SITE_PASSWORD`. O Wrangler pedirá a nova senha sem precisar escrevê-la no comando. Depois execute `npx.cmd --yes wrangler secret put ACCESS_SESSION_SECRET` e informe um novo valor aleatório de 32 bytes ou mais; isso revoga as sessões antigas. Guarde os valores fora do repositório. A chave administrativa de `/logs/` é separada. Apenas alguém com acesso à conta Cloudflare ou aos segredos do Worker consegue trocar essa senha.
+
+Limite importante: GitHub Pages publica HTML, JavaScript e GIFs como arquivos estáticos públicos. A senha limita o uso da interface e o acesso aos dados da API; não transforma esses arquivos em conteúdo privado. Para esconder os próprios arquivos, seria necessário migrar a hospedagem para um serviço com autenticação na borda.
+
 ## Instalação do backend (referência; recursos já criados)
 
 O banco `nfc-0x0krr`, o Worker `nfc-0x0krr-api` e o widget Turnstile já existem. Não execute os passos de criação novamente. Os segredos `ADMIN_SECRET`, `IP_HASH_SECRET` e `TURNSTILE_SECRET_KEY` estão no armazenamento privado do Worker. Para futuras alterações do código, execute `npx wrangler deploy` dentro de `api/`.
