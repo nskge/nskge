@@ -1,0 +1,14 @@
+# Cloudflare Worker local credentials, caches and generated artifacts.
+.dev.vars
+.dev.vars.*
+.env
+.env.*
+!.env.example
+.wrangler/
+node_modules/
+*.sqlite
+*.sqlite3
+*.db
+*.log
+*.pem
+*.key
