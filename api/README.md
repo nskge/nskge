@@ -24,6 +24,7 @@ O frontend usa a URL pública em `assets/config.js`. Se a API estiver indisponí
 ## Dados e segurança
 
 - Cada navegador recebe um ID aleatório UUID v4. **Não é um identificador confiável de pessoa**: pode ser trocado.
+- A página mostra visitantes aproximados, aberturas e o número de IDs distintos que deixaram marca. O GIF local alterna entre duas cenas do Juuzou a cada abertura no mesmo navegador.
 - A API anota horário UTC, país, tipo aproximado de sistema operacional e navegador, e ID curto para associar visitas e mensagens. Não captura endereço MAC, localização precisa ou IP em texto.
 - O IP no servidor é utilizado para **HMAC (hash com chave secreta)**, apenas para controle de abuso, sem ser mostrado no painel.
 - Mensagem: no máximo **140 caracteres** e **560 bytes**, rejeitando códigos de controle e caracteres de spoofing bidi.

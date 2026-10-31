@@ -5,6 +5,15 @@
   const $=id=>document.getElementById(id);
   const canvas=$('draw'),ctx=canvas.getContext('2d',{alpha:false});
   const input=$('message'),count=$('count'),status=$('submit-status'),button=$('send-mark'),counter=$('visitor-count');
+  const hero=$('hero-gif');
+  const gifs=['/nskge/assets/juuzou.gif','/nskge/assets/juuzou-alt.gif'];
+  try{
+    const stored=Number(localStorage.getItem('0x0krr.gif.v1'));
+    const index=Number.isSafeInteger(stored)&&stored>=0?stored%gifs.length:0;
+    hero.src=gifs[index];
+    localStorage.setItem('0x0krr.gif.v1',String((index+1)%gifs.length));
+  }catch{hero.src=gifs[0];}
+  hero.addEventListener('error',()=>{if(!hero.src.endsWith(gifs[0]))hero.src=gifs[0];});
   let lines=[],drawing=false,token='',widget=null,ready=false;
   let visitorId;
   const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -13,6 +22,12 @@
     if(!uuid.test(visitorId||'')){visitorId=crypto.randomUUID();localStorage.setItem('0x0krr.anon.v1',visitorId);}
   }catch{visitorId=crypto.randomUUID();}
   const say=s=>{status.textContent=s;};
+  const renderCounter=v=>{
+    const visitors=Number(v.visitors),makers=Number(v.makers),visits=Number(v.visits);
+    if(![visitors,makers,visits].every(Number.isSafeInteger))return;
+    counter.textContent=visitors.toLocaleString('pt-BR')+' passaram · '+makers.toLocaleString('pt-BR')+' deixaram marca · '+visits.toLocaleString('pt-BR')+' aberturas';
+    counter.hidden=false;
+  };
   const clamp=x=>Math.max(0,Math.min(1,x));
   const pos=e=>{const b=canvas.getBoundingClientRect();return [clamp((e.clientX-b.left)/b.width),clamp((e.clientY-b.top)/b.height)];};
   const pointCount=()=>lines.reduce((n,x)=>n+x.length,0);
@@ -69,6 +84,7 @@
     try{
       await call('/api/mark',{visitorId,message,drawing:lines,website:$('website').value,turnstile:token});
       input.value='';count.textContent='0/140';lines=[];redraw();say('sua marca foi salva.');
+      try{renderCounter(await call('/api/summary'));}catch{}
     }catch(e){say(e.message||'Não foi possível enviar.');}
     finally{button.disabled=false;reset();}
   });
@@ -83,8 +99,7 @@
       script.src='https://challenges.cloudflare.com/turnstile/v0/api.js?onload=partyTurnstileLoaded&render=explicit';
       script.async=true;script.defer=true;document.head.append(script);
       const v=await call('/api/visit',{visitorId});
-      counter.textContent=Number(v.visitors).toLocaleString('pt-BR')+' visitantes · '+Number(v.visits).toLocaleString('pt-BR')+' aberturas';
-      counter.hidden=false;
+      renderCounter(v);
     }catch{button.disabled=true;say('recados temporariamente indisponíveis.');}
   }
   init();

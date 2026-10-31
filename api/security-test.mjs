@@ -63,9 +63,9 @@ try{
   await check('bad Turnstile',mark({turnstile:'bad'}),403);
   await check('wrong Turnstile hostname',mark({turnstile:'wrong-host'}),403);
   await check('wrong Turnstile action',mark({turnstile:'wrong-action'}),403);
-  let r=await check('first opening',visit(),200);assert.deepEqual(r.data,{visits:1,visitors:1});
-  r=await check('repeat opening',visit(),200);assert.deepEqual(r.data,{visits:2,visitors:1});
-  r=await check('second visitor',visit(otherId),200);assert.deepEqual(r.data,{visits:3,visitors:2});
+  let r=await check('first opening',visit(),200);assert.deepEqual(r.data,{visits:1,visitors:1,makers:0});
+  r=await check('repeat opening',visit(),200);assert.deepEqual(r.data,{visits:2,visitors:1,makers:0});
+  r=await check('second visitor',visit(otherId),200);assert.deepEqual(r.data,{visits:3,visitors:2,makers:0});
   for(let i=0;i<25;i++)await visit();
   r=await call('/api/summary');assert.equal(r.data.visits,21);assert.equal(r.data.visitors,2);
   console.log('OK opening count, approximate uniques, refresh limit');
@@ -79,7 +79,7 @@ try{
   assert.equal('ip_hash' in r.data.rows[0],false);
   r=await check('private notification',call('/api/admin/notifications',{headers:admin}),200);assert.equal(r.data.latest,1);
   await check('malicious cursor',call('/api/admin/messages?before=1%20OR%201=1',{headers:admin}),400);
-  r=await check('public summary',call('/api/summary'),200);assert.deepEqual(Object.keys(r.data).sort(),['visitors','visits']);
+  r=await check('public summary',call('/api/summary'),200);assert.deepEqual(Object.keys(r.data).sort(),['makers','visitors','visits']);assert.equal(r.data.makers,1);
   assert.equal(db.prepare('SELECT COUNT(*) AS n FROM marks').get().n,1);
   const minute=Math.floor(Date.now()/60000);
   const ipHash=db.prepare('SELECT ip_hash FROM marks LIMIT 1').get().ip_hash;

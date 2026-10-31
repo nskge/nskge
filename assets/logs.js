@@ -34,7 +34,7 @@
       const data=await response.json();
       if(!response.ok)throw Error(data.error||'Erro');
       if(!append)list.replaceChildren();
-      totals.textContent=data.total.visitors+' visitantes • '+data.total.visits+' aberturas • '+data.total.messages+' marcas';
+      totals.textContent=data.total.visitors+' visitantes • '+data.total.makers+' deixaram marca • '+data.total.visits+' aberturas • '+data.total.messages+' marcas';
       for(const entry of data.rows){
         const el=document.createElement('article');el.className='entry';
         const date=new Date(entry.time_utc);

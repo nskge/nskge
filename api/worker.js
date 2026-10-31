@@ -94,7 +94,7 @@ async function main(request,env){
   if(!(await limiter.limit({key:ipHash})).success)return out({error:'Muitas requisições. Tente mais tarde.'},429,origin,env);
   if(request.method==='GET'&&path==='/api/config')return out({enabled:true,siteKey:env.TURNSTILE_SITE_KEY},200,origin,env);
   if(request.method==='GET'&&path==='/api/summary'){
-    const c=await env.DB.prepare('SELECT COUNT(*) AS visits,COUNT(DISTINCT visitor_id) AS visitors FROM visits').first();
+    const c=await env.DB.prepare('SELECT (SELECT COUNT(*) FROM visits) AS visits,(SELECT COUNT(DISTINCT visitor_id) FROM visits) AS visitors,(SELECT COUNT(DISTINCT visitor_id) FROM marks) AS makers').first();
     return out(c,200,origin,env);
   }
   if(request.method==='POST'&&path==='/api/visit'){
@@ -102,7 +102,7 @@ async function main(request,env){
     // Count each opening, with atomic per-browser and per-IP ceilings against refresh spam.
     await env.DB.prepare('INSERT INTO visits(visitor_id,time_utc,minute_epoch,ip_hash,country,os,browser) SELECT ?,?,?,?,?,?,? WHERE (SELECT COUNT(*) FROM visits WHERE visitor_id=? AND minute_epoch>?)<20 AND (SELECT COUNT(*) FROM visits WHERE ip_hash=? AND minute_epoch>?)<100')
       .bind(id,new Date().toISOString(),m,hash,d.country,d.os,d.browser,id,m-60,hash,m-60).run();
-    const c=await env.DB.prepare('SELECT COUNT(*) AS visits,COUNT(DISTINCT visitor_id) AS visitors FROM visits').first();
+    const c=await env.DB.prepare('SELECT (SELECT COUNT(*) FROM visits) AS visits,(SELECT COUNT(DISTINCT visitor_id) FROM visits) AS visitors,(SELECT COUNT(DISTINCT visitor_id) FROM marks) AS makers').first();
     return out(c,200,origin,env);
   }
   if(request.method==='POST'&&path==='/api/mark'){
@@ -133,7 +133,7 @@ async function main(request,env){
     const table=marks?'marks':'visits';
     const columns=marks?'id,visitor_id,time_utc,country,os,browser,message,drawing':'id,visitor_id,time_utc,country,os,browser';
     const result=await env.DB.prepare('SELECT '+columns+' FROM '+table+' WHERE id<? ORDER BY id DESC LIMIT 50').bind(before).all();
-    const total=await env.DB.prepare('SELECT (SELECT COUNT(*) FROM visits) AS visits,(SELECT COUNT(DISTINCT visitor_id) FROM visits) AS visitors,(SELECT COUNT(*) FROM marks) AS messages').first();
+    const total=await env.DB.prepare('SELECT (SELECT COUNT(*) FROM visits) AS visits,(SELECT COUNT(DISTINCT visitor_id) FROM visits) AS visitors,(SELECT COUNT(DISTINCT visitor_id) FROM marks) AS makers,(SELECT COUNT(*) FROM marks) AS messages').first();
     const rows=result.results.map(x=>({...x,visitor_id:x.visitor_id.slice(0,8),...(marks?{drawing:JSON.parse(x.drawing)}:{})}));
     return out({total,rows,next:rows.length===50?rows[49].id:null},200,origin,env);
   }
