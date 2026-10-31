@@ -25,7 +25,7 @@
   const renderCounter=v=>{
     const visitors=Number(v.visitors),makers=Number(v.makers),visits=Number(v.visits);
     if(![visitors,makers,visits].every(Number.isSafeInteger))return;
-    counter.textContent=visitors.toLocaleString('pt-BR')+' passaram · '+makers.toLocaleString('pt-BR')+' deixaram marca · '+visits.toLocaleString('pt-BR')+' aberturas';
+    counter.textContent=visitors.toLocaleString('pt-BR')+(visitors===1?' passou · ':' passaram · ')+makers.toLocaleString('pt-BR')+(makers===1?' deixou marca · ':' deixaram marca · ')+visits.toLocaleString('pt-BR')+(visits===1?' abertura':' aberturas');
     counter.hidden=false;
   };
   const clamp=x=>Math.max(0,Math.min(1,x));
