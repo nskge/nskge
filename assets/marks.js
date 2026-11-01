@@ -2,9 +2,8 @@
   'use strict';
   const api=(window.NFC_SITE_CONFIG?.apiBase||'').replace(/\/$/,'');
   const $=id=>document.getElementById(id);
-  const writeTab=$('tab-write'),peopleTab=$('tab-people');
-  const writePanel=$('write-panel'),peoplePanel=$('people-panel');
-  const closeWrite=$('close-write'),closePeople=$('close-people');
+  const peopleTab=$('tab-people'),peoplePanel=$('people-panel');
+  const closePeople=$('close-people');
   const status=$('people-status'),list=$('people-list'),more=$('people-more');
   let cursor=null,loading=false;
 
@@ -39,11 +38,9 @@
     loading=true;more.disabled=true;status.textContent='carregando mensagens...';
     const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),8000);
     try{
-      if(window.NFC_ACCESS?.ready)await window.NFC_ACCESS.ready;
       const query=append&&cursor?'?before='+encodeURIComponent(String(cursor)):'';
-      const response=await fetch(api+'/api/marks'+query,{mode:'cors',cache:'no-store',signal:controller.signal,headers:{'X-Site-Access':window.NFC_ACCESS?.token||''}});
+      const response=await fetch(api+'/api/marks'+query,{mode:'cors',cache:'no-store',signal:controller.signal});
       const data=await response.json();
-      if(response.status===401&&window.NFC_ACCESS?.lock)window.NFC_ACCESS.lock();
       if(!response.ok||!Array.isArray(data.rows))throw Error('Não foi possível carregar as marcas.');
       if(!append)list.replaceChildren();
       for(const entry of data.rows.slice(0,20))list.append(markCard(entry));
@@ -53,28 +50,15 @@
     }catch{status.textContent='Não foi possível carregar as marcas agora.';}
     finally{clearTimeout(timer);loading=false;more.disabled=false;}
   }
-  function show(people){
-    writeTab.setAttribute('aria-selected',String(!people));peopleTab.setAttribute('aria-selected',String(people));
-    writePanel.hidden=people;peoplePanel.hidden=!people;document.body.classList.add('panel-open');
-    (people?closePeople:closeWrite).focus();
-    if(people)load(false);
+  function show(){
+    peoplePanel.hidden=false;document.body.classList.add('panel-open');closePeople.focus();load(false);
   }
-  function close(panel){
-    writePanel.hidden=true;peoplePanel.hidden=true;document.body.classList.remove('panel-open');
-    writeTab.setAttribute('aria-selected','false');peopleTab.setAttribute('aria-selected','false');
-    (panel==='people'?peopleTab:writeTab).focus();
+  function close(){
+    peoplePanel.hidden=true;document.body.classList.remove('panel-open');peopleTab.focus();
   }
-  writeTab.addEventListener('click',()=>show(false));
-  peopleTab.addEventListener('click',()=>show(true));
-  for(const tab of [writeTab,peopleTab])tab.addEventListener('keydown',e=>{
-    if(e.key==='ArrowLeft'||e.key==='ArrowRight'){
-      e.preventDefault();const people=tab===writeTab;show(people);(people?peopleTab:writeTab).focus();
-    }
-  });
-  closeWrite.addEventListener('click',()=>close('write'));
-  closePeople.addEventListener('click',()=>close('people'));
-  $('write-to-people').addEventListener('click',()=>show(true));
-  $('people-to-write').addEventListener('click',()=>show(false));
-  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&document.body.classList.contains('panel-open'))close(peoplePanel.hidden?'write':'people');});
+  peopleTab.addEventListener('click',show);
+  closePeople.addEventListener('click',close);
+  $('people-to-write').addEventListener('click',close);
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!peoplePanel.hidden)close();});
   more.addEventListener('click',()=>load(true));
 })();

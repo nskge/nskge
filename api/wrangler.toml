@@ -8,7 +8,6 @@ preview_urls = false
 ALLOWED_ORIGIN = "https://nskge.github.io"
 EXPECTED_HOSTNAME = "nskge.github.io"
 TURNSTILE_SITE_KEY = "0x4AAAAAAFuJfHxUtyyzF9vh"
-ACCESS_REQUIRED = "true"
 
 [[d1_databases]]
 binding = "DB"
@@ -30,11 +29,4 @@ name = "ADMIN_RATE_LIMIT"
 namespace_id = "1002"
   [ratelimits.simple]
   limit = 30
-  period = 60
-
-[[ratelimits]]
-name = "ACCESS_RATE_LIMIT"
-namespace_id = "1003"
-  [ratelimits.simple]
-  limit = 5
   period = 60

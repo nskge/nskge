@@ -4,7 +4,7 @@ const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}
 const minute=()=>Math.floor(Date.now()/60000);
 function headers(origin,env){
   const h=new Headers({'Content-Type':'application/json; charset=utf-8','Cache-Control':'no-store','X-Content-Type-Options':'nosniff','Referrer-Policy':'no-referrer'});
-  if(origin===env.ALLOWED_ORIGIN){h.set('Access-Control-Allow-Origin',origin);h.set('Vary','Origin');h.set('Access-Control-Allow-Methods','GET, POST, OPTIONS');h.set('Access-Control-Allow-Headers','Content-Type, Authorization, X-Site-Access');h.set('Access-Control-Max-Age','600');}
+  if(origin===env.ALLOWED_ORIGIN){h.set('Access-Control-Allow-Origin',origin);h.set('Vary','Origin');h.set('Access-Control-Allow-Methods','GET, POST, OPTIONS');h.set('Access-Control-Allow-Headers','Content-Type, Authorization');h.set('Access-Control-Max-Age','600');}
   return h;
 }
 function out(obj,status,origin,env){return new Response(JSON.stringify(obj),{status,headers:headers(origin,env)});}
@@ -84,22 +84,6 @@ async function adminOK(request,env){
   let diff=0;for(let i=0;i<left.length;i++)diff|=left[i]^right[i];
   return diff===0;
 }
-const epoch=()=>Math.floor(Date.now()/1000);
-const ACCESS_TTL=24*60*60;
-const b64url=bytes=>btoa(String.fromCharCode(...bytes)).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
-function unb64url(value){try{if(!/^[A-Za-z0-9_-]{40,100}$/.test(value))return null;const raw=atob(value.replace(/-/g,'+').replace(/_/g,'/')+'==='.slice((value.length+3)%4));return Uint8Array.from(raw,c=>c.charCodeAt(0));}catch{return null;}}
-async function accessKey(env){return crypto.subtle.importKey('raw',enc.encode(env.ACCESS_SESSION_SECRET),{name:'HMAC',hash:'SHA-256'},false,['sign','verify']);}
-async function issueAccess(env){const expires=String(epoch()+ACCESS_TTL),signature=await crypto.subtle.sign('HMAC',await accessKey(env),enc.encode(expires));return expires+'.'+b64url(new Uint8Array(signature));}
-async function accessOK(request,env){
-  const raw=request.headers.get('X-Site-Access')||'',parts=raw.split('.');if(parts.length!==2||!/^\d{10}$/.test(parts[0]))return false;
-  const expires=Number(parts[0]),signature=unb64url(parts[1]);if(!signature||expires<epoch()||expires>epoch()+ACCESS_TTL)return false;
-  return crypto.subtle.verify('HMAC',await accessKey(env),signature,enc.encode(parts[0]));
-}
-async function passwordOK(value,env){
-  if(typeof value!=='string'||!value||enc.encode(value).length>512)return false;
-  const hashes=await Promise.all([value,env.SITE_PASSWORD].map(s=>crypto.subtle.digest('SHA-256',enc.encode(s))));
-  const left=new Uint8Array(hashes[0]),right=new Uint8Array(hashes[1]);let diff=0;for(let i=0;i<left.length;i++)diff|=left[i]^right[i];return diff===0;
-}
 async function checkTurnstile(token,env,action='message'){
   if(typeof token!=='string'||!token||token.length>2048)return false;
   const form=new FormData();form.set('secret',env.TURNSTILE_SECRET_KEY);form.set('response',token);
@@ -115,20 +99,12 @@ async function main(request,env){
   const allowed=origin===env.ALLOWED_ORIGIN;
   if(request.method==='OPTIONS')return new Response(null,{status:allowed?204:403,headers:headers(origin,env)});
   if(!allowed)return out({error:'Origem não permitida.'},403,origin,env);
-  if(!env.DB||!env.IP_HASH_SECRET||!env.ADMIN_SECRET||!env.SITE_PASSWORD||!env.ACCESS_SESSION_SECRET||!env.TURNSTILE_SECRET_KEY||!env.TURNSTILE_SITE_KEY||env.TURNSTILE_SITE_KEY.startsWith('REPLACE')||!env.PUBLIC_RATE_LIMIT||!env.ADMIN_RATE_LIMIT||!env.ACCESS_RATE_LIMIT)return out({error:'API não configurada.'},503,origin,env);
+  if(!env.DB||!env.IP_HASH_SECRET||!env.ADMIN_SECRET||!env.TURNSTILE_SECRET_KEY||!env.TURNSTILE_SITE_KEY||env.TURNSTILE_SITE_KEY.startsWith('REPLACE')||!env.PUBLIC_RATE_LIMIT||!env.ADMIN_RATE_LIMIT)return out({error:'API não configurada.'},503,origin,env);
   const path=url.pathname;
   const ipHash=await hashedIP(request,env);
-  const limiter=path==='/api/access'?env.ACCESS_RATE_LIMIT:path.startsWith('/api/admin/')?env.ADMIN_RATE_LIMIT:env.PUBLIC_RATE_LIMIT;
+  const limiter=path.startsWith('/api/admin/')?env.ADMIN_RATE_LIMIT:env.PUBLIC_RATE_LIMIT;
   if(!(await limiter.limit({key:ipHash})).success)return out({error:'Muitas requisições. Tente mais tarde.'},429,origin,env);
   if(request.method==='GET'&&path==='/api/config')return out({enabled:true,siteKey:env.TURNSTILE_SITE_KEY},200,origin,env);
-  if(request.method==='POST'&&path==='/api/access'){
-    const value=await bodyJSON(request);
-    if(value.website!==''||!await checkTurnstile(value.turnstile,env,'access'))return out({error:'Verificação inválida.'},403,origin,env);
-    if(!await passwordOK(value.password,env))return out({error:'Senha inválida.'},401,origin,env);
-    return out({token:await issueAccess(env),expiresIn:ACCESS_TTL},200,origin,env);
-  }
-  if(request.method==='GET'&&path==='/api/access')return out({ok:true},await accessOK(request,env)?200:401,origin,env);
-  if(env.ACCESS_REQUIRED==='true'&&!path.startsWith('/api/admin/')&&!await accessOK(request,env))return out({error:'Acesso ao site necessário.'},401,origin,env);
   if(request.method==='GET'&&path==='/api/summary'){
     const c=await env.DB.prepare('SELECT (SELECT COUNT(*) FROM visits) AS visits,(SELECT COUNT(DISTINCT visitor_id) FROM visits) AS visitors,(SELECT COUNT(DISTINCT visitor_id) FROM marks) AS makers').first();
     return out(c,200,origin,env);

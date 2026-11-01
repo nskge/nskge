@@ -4,13 +4,7 @@ Site estático em GitHub Pages; API em Cloudflare Workers + D1. O backend foi im
 
 O diretório público **/logs/** contém somente o **painel**, sem dados privados. A aba **mensagens** no site mostra nome, mensagem e desenho enviados pelos visitantes. Horário, UUID, país, sistema e navegador ficam restritos às rotas administrativas. Não coloque logs reais, tokens, chaves ou mensagens dentro do repositório GitHub.
 
-## Senha de entrada
-
-O site mostra uma tela de senha antes da interface. O Worker confere a senha guardada em `SITE_PASSWORD`, valida Turnstile e libera uma sessão assinada de no máximo 24 horas no `sessionStorage` do navegador. Fechar a aba pode encerrar a sessão antes. O endpoint `/api/access` aceita no máximo 5 tentativas por minuto por hash de IP. As rotas públicas de visitas e marcas exigem a sessão. A senha não fica no GitHub nem no JavaScript público.
-
-Para trocar a senha, entre com sua conta Cloudflare, abra o terminal em `api/` e execute `npx.cmd --yes wrangler secret put SITE_PASSWORD`. O Wrangler pedirá a nova senha sem precisar escrevê-la no comando. Depois execute `npx.cmd --yes wrangler secret put ACCESS_SESSION_SECRET` e informe um novo valor aleatório de 32 bytes ou mais; isso revoga as sessões antigas. Guarde os valores fora do repositório. A chave administrativa de `/logs/` é separada. Apenas alguém com acesso à conta Cloudflare ou aos segredos do Worker consegue trocar essa senha.
-
-Limite importante: GitHub Pages publica HTML, JavaScript e GIFs como arquivos estáticos públicos. A senha limita o uso da interface e o acesso aos dados da API; não transforma esses arquivos em conteúdo privado. Para esconder os próprios arquivos, seria necessário migrar a hospedagem para um serviço com autenticação na borda.
+O site e o mural são públicos. O formulário para nome, mensagem e desenho fica na página inicial junto ao Instagram; a lista de recados abre em um painel separado. O envio continua protegido por Turnstile e limites no Worker. `/logs/` exige a chave administrativa separada.
 
 ## Instalação do backend (referência; recursos já criados)
 
