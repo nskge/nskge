@@ -68,7 +68,7 @@
   }
   const reset=()=>{token='';if(widget!==null&&window.turnstile)window.turnstile.reset(widget);};
   window.partyTurnstileLoaded=()=>{
-    if(!ready||!window.turnstile||widget!==null)return;
+    if(!ready||typeof window.turnstile?.render!=='function'||widget!==null)return;
     widget=window.turnstile.render('#turnstile',{
       sitekey:window.partyTurnstileKey,theme:'dark',size:'flexible',action:'message',
       callback:t=>{token=t;},'expired-callback':()=>{token='';},
@@ -97,7 +97,7 @@
       if(!config.enabled||typeof config.siteKey!=='string'||!/^[A-Za-z0-9_-]+$/.test(config.siteKey))throw Error();
       ready=true;button.disabled=false;say('pode escrever ou desenhar sua marca.');
       window.partyTurnstileKey=config.siteKey;
-      if(window.turnstile)window.partyTurnstileLoaded();
+      if(typeof window.turnstile?.render==='function')window.partyTurnstileLoaded();
       else{const script=document.createElement('script');script.src='https://challenges.cloudflare.com/turnstile/v0/api.js?onload=partyTurnstileLoaded&render=explicit';script.async=true;script.defer=true;document.head.append(script);}
       const v=await call('/api/visit',{visitorId});
       renderCounter(v);
