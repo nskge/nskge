@@ -14,7 +14,7 @@
 
 <p>
 Studying <b>Pentest Web & Red Team</b> · Offensive Security<br>
-<sub><code>FIAP :: Red Team & Pentest postgrad (incoming)</code> · <code>ADS :: final year</code></sub>
+<sub><code>FIAP :: Red Team & Pentest postgrad</code> · <code>ADS :: graduated</code></sub>
 </p>
 
 <p>
@@ -33,13 +33,13 @@ Studying <b>Pentest Web & Red Team</b> · Offensive Security<br>
 ocre@nightcity:~$ cat /etc/profile
 
   ┌─[ IDENTITY ]──────────────────────────────────────────────┐
-  │  name      :: Sândalo (San) Ocre · aka ocre / nskge         │
-  │  studying  :: Systems Analysis & Development — final year    │
-  │  next      :: Red Team & Pentest postgrad @ FIAP            │
-  │  focus     :: Pentest Web · Red Team · Offensive Security    │
-  │  worked    :: IT support · infra · software dev · automation │
-  │  langs     :: pt · en · es                                  │
-  │  status    :: studying hard, breaking things to learn them  │
+  │  name      :: Sândalo (San) Ocre · aka ocre / nskge       │
+  │  studying  :: Red Team & Pentest postgrad @ FIAP          │
+  │  done      :: Systems Analysis & Development — graduated  │
+  │  focus     :: Pentest Web · Red Team · Offensive Security │
+  │  worked    :: IT support · infra · dev · automation       │
+  │  langs     :: pt · en · es                                │
+  │  status    :: studying hard, breaking things to learn them │
   └────────────────────────────────────────────────────────────┘
 
 ocre@nightcity:~$ sudo make me a red teamer
