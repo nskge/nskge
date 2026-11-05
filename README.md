@@ -50,16 +50,6 @@ ocre@nightcity:~$ sudo make me a red teamer
 
 ## `> ./arsenal --offensive`
 
-Tools I use and explore in labs and authorized assessments:
-
-| Workflow | Toolkit |
-|---|---|
-| Discovery & reconnaissance | Nmap · Subfinder · httpx · Katana |
-| Web & API testing | Burp Suite · ffuf · curl · Nuclei |
-| Network analysis | Wireshark · tcpdump |
-| Lab exploitation & password auditing | Metasploit · SQLmap · Hashcat · John the Ripper |
-| Practice & methodology | PortSwigger Web Security Academy · Hack The Box · TryHackMe · OWASP |
-
 <p>
   <img src="https://img.shields.io/badge/Burp_Suite-A855F7?style=for-the-badge&logo=burpsuite&logoColor=white&labelColor=0d0d0d" />
   <img src="https://img.shields.io/badge/Kali_Linux-A855F7?style=for-the-badge&logo=kalilinux&logoColor=white&labelColor=0d0d0d" />
@@ -71,24 +61,38 @@ Tools I use and explore in labs and authorized assessments:
   <img src="https://img.shields.io/badge/TryHackMe-A855F7?style=for-the-badge&logo=tryhackme&logoColor=white&labelColor=0d0d0d" />
 </p>
 
+<p>
+  <img src="https://img.shields.io/badge/Subfinder-A855F7?style=for-the-badge&labelColor=0d0d0d" alt="Subfinder" />
+  <img src="https://img.shields.io/badge/httpx-A855F7?style=for-the-badge&labelColor=0d0d0d" alt="httpx" />
+  <img src="https://img.shields.io/badge/Katana-A855F7?style=for-the-badge&labelColor=0d0d0d" alt="Katana" />
+  <img src="https://img.shields.io/badge/ffuf-A855F7?style=for-the-badge&labelColor=0d0d0d" alt="ffuf" />
+  <img src="https://img.shields.io/badge/Nuclei-A855F7?style=for-the-badge&labelColor=0d0d0d" alt="Nuclei" />
+  <img src="https://img.shields.io/badge/curl-A855F7?style=for-the-badge&labelColor=0d0d0d" alt="curl" />
+  <img src="https://img.shields.io/badge/tcpdump-A855F7?style=for-the-badge&labelColor=0d0d0d" alt="tcpdump" />
+  <img src="https://img.shields.io/badge/SQLmap-A855F7?style=for-the-badge&labelColor=0d0d0d" alt="SQLmap" />
+  <img src="https://img.shields.io/badge/Hashcat-A855F7?style=for-the-badge&labelColor=0d0d0d" alt="Hashcat" />
+  <img src="https://img.shields.io/badge/John_the_Ripper-A855F7?style=for-the-badge&labelColor=0d0d0d" alt="John the Ripper" />
+</p>
+
 ## `> ./arsenal --dev`
 
 <p>
   <img src="https://skillicons.dev/icons?i=python,cs,java,html,css,js,bash,powershell&theme=dark" alt="Python, C#, Java, HTML, CSS, JavaScript, Bash and PowerShell" />
 </p>
 
-**AI-assisted development:** I build scripts, automation, and web projects with AI as part of my workflow. My main languages are Python, C#, Java, and HTML/CSS/JavaScript; I explore other stacks as projects require them. Learning to understand, debug, and validate what I ship is part of the process.
+<p>
+  <img src="https://img.shields.io/badge/AI_Assisted-Development-A855F7?style=for-the-badge&labelColor=0d0d0d" alt="AI-assisted development" />
+</p>
 
 ## `> ./arsenal --cloud-infra`
 
-Linux · Windows Server · Docker · Git & GitHub · Microsoft 365 tenant administration · Entra ID · Active Directory · Bash & PowerShell automation.
-
 <p>
-  <img src="https://skillicons.dev/icons?i=azure,linux,docker,git,vscode&theme=dark" alt="infra stack" />
+  <img src="https://skillicons.dev/icons?i=azure,linux,windows,docker,git,github,vscode&theme=dark" alt="infra stack" />
 </p>
 <p>
   <img src="https://img.shields.io/badge/Entra_ID-7c3aed?style=for-the-badge&logoColor=white&labelColor=0d0d0d" />
-  <img src="https://img.shields.io/badge/Microsoft_365-7c3aed?style=for-the-badge&logoColor=white&labelColor=0d0d0d" />
+  <img src="https://img.shields.io/badge/Microsoft_365-Tenant_Admin-7c3aed?style=for-the-badge&logoColor=white&labelColor=0d0d0d" alt="Microsoft 365 tenant administration" />
+  <img src="https://img.shields.io/badge/Windows_Server-7c3aed?style=for-the-badge&logoColor=white&labelColor=0d0d0d" alt="Windows Server" />
   <img src="https://img.shields.io/badge/Active_Directory-7c3aed?style=for-the-badge&logoColor=white&labelColor=0d0d0d" />
   <img src="https://img.shields.io/badge/Cisco%2FHP-7c3aed?style=for-the-badge&logo=cisco&logoColor=white&labelColor=0d0d0d" />
 </p>
@@ -97,12 +101,24 @@ Linux · Windows Server · Docker · Git & GitHub · Microsoft 365 tenant admini
 
 ## `> ls ./projects`
 
-| Pinned project | What lives there |
-|---|---|
-| [authorized-security-writeups](https://github.com/nskge/authorized-security-writeups) | Authorized findings, lab writeups, and security study notes. |
-| [bruce-pn532-field-kit](https://github.com/nskge/bruce-pn532-field-kit) | Experimental Bruce firmware fork for T-Embed PN532 NFC auditing and cross-platform host tools. |
-| [RansomwareLabPython](https://github.com/nskge/RansomwareLabPython) | Python ransomware laboratory project. |
-| [KeyloggerLabPython](https://github.com/nskge/KeyloggerLabPython) | Python keylogger laboratory project. |
+<p>
+  <a href="https://github.com/nskge/authorized-security-writeups">
+    <img src="https://img.shields.io/badge/Security_Writeups-Labs_%26_Findings-A855F7?style=for-the-badge&logo=markdown&logoColor=white&labelColor=0d0d0d" alt="Security Writeups — Labs and Findings" />
+  </a>
+  &nbsp;
+  <a href="https://github.com/nskge/bruce-pn532-field-kit">
+    <img src="https://img.shields.io/badge/Bruce_PN532-NFC_Field_Kit-7c3aed?style=for-the-badge&logo=espressif&logoColor=white&labelColor=0d0d0d" alt="Bruce PN532 — NFC Field Kit" />
+  </a>
+</p>
+<p>
+  <a href="https://github.com/nskge/RansomwareLabPython">
+    <img src="https://img.shields.io/badge/Ransomware_Lab-Python-A855F7?style=for-the-badge&logo=python&logoColor=white&labelColor=0d0d0d" alt="Ransomware Lab — Python" />
+  </a>
+  &nbsp;
+  <a href="https://github.com/nskge/KeyloggerLabPython">
+    <img src="https://img.shields.io/badge/Keylogger_Lab-Python-7c3aed?style=for-the-badge&logo=python&logoColor=white&labelColor=0d0d0d" alt="Keylogger Lab — Python" />
+  </a>
+</p>
 
 <sub>Pinned repos below — that's where the real stuff lives. 👇</sub>
 
