@@ -50,6 +50,16 @@ ocre@nightcity:~$ sudo make me a red teamer
 
 ## `> ./arsenal --offensive`
 
+Tools I use and explore in labs and authorized assessments:
+
+| Workflow | Toolkit |
+|---|---|
+| Discovery & reconnaissance | Nmap · Subfinder · httpx · Katana |
+| Web & API testing | Burp Suite · ffuf · curl · Nuclei |
+| Network analysis | Wireshark · tcpdump |
+| Lab exploitation & password auditing | Metasploit · SQLmap · Hashcat · John the Ripper |
+| Practice & methodology | PortSwigger Web Security Academy · Hack The Box · TryHackMe · OWASP |
+
 <p>
   <img src="https://img.shields.io/badge/Burp_Suite-A855F7?style=for-the-badge&logo=burpsuite&logoColor=white&labelColor=0d0d0d" />
   <img src="https://img.shields.io/badge/Kali_Linux-A855F7?style=for-the-badge&logo=kalilinux&logoColor=white&labelColor=0d0d0d" />
@@ -64,10 +74,14 @@ ocre@nightcity:~$ sudo make me a red teamer
 ## `> ./arsenal --dev`
 
 <p>
-  <img src="https://skillicons.dev/icons?i=python,bash,cs,java,ts,js,react,nextjs,nodejs,postgres,mongodb&theme=dark" alt="dev stack" />
+  <img src="https://skillicons.dev/icons?i=python,cs,java,html,css,js,bash,powershell&theme=dark" alt="Python, C#, Java, HTML, CSS, JavaScript, Bash and PowerShell" />
 </p>
 
+**AI-assisted development:** I build scripts, automation, and web projects with AI as part of my workflow. My main languages are Python, C#, Java, and HTML/CSS/JavaScript; I explore other stacks as projects require them. Learning to understand, debug, and validate what I ship is part of the process.
+
 ## `> ./arsenal --cloud-infra`
+
+Linux · Windows Server · Docker · Git & GitHub · Microsoft 365 tenant administration · Entra ID · Active Directory · Bash & PowerShell automation.
 
 <p>
   <img src="https://skillicons.dev/icons?i=azure,linux,docker,git,vscode&theme=dark" alt="infra stack" />
@@ -83,15 +97,12 @@ ocre@nightcity:~$ sudo make me a red teamer
 
 ## `> ls ./projects`
 
-<p>
-  <a href="https://github.com/nskge/abaddon">
-    <img src="https://img.shields.io/badge/💀_abaddon-Web_Vuln_Scanner_(Python)-A855F7?style=for-the-badge&labelColor=0d0d0d" />
-  </a>
-  &nbsp;
-  <a href="https://github.com/nskge/CaptureTheOkr">
-    <img src="https://img.shields.io/badge/🚩_CaptureTheOkr-CTF-7c3aed?style=for-the-badge&labelColor=0d0d0d" />
-  </a>
-</p>
+| Pinned project | What lives there |
+|---|---|
+| [authorized-security-writeups](https://github.com/nskge/authorized-security-writeups) | Authorized findings, lab writeups, and security study notes. |
+| [bruce-pn532-field-kit](https://github.com/nskge/bruce-pn532-field-kit) | Experimental Bruce firmware fork for T-Embed PN532 NFC auditing and cross-platform host tools. |
+| [RansomwareLabPython](https://github.com/nskge/RansomwareLabPython) | Python ransomware laboratory project. |
+| [KeyloggerLabPython](https://github.com/nskge/KeyloggerLabPython) | Python keylogger laboratory project. |
 
 <sub>Pinned repos below — that's where the real stuff lives. 👇</sub>
 
